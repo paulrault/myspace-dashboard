@@ -1276,10 +1276,1655 @@ textarea:focus-visible {
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<!-- Le JavaScript sera ajouté dans la partie suivante. -->
 <script>
-/* MYSPACE DASHBOARD V5 — JAVASCRIPT À AJOUTER */
+"use strict";
+
+/* ==========================================
+   MYSPACE DASHBOARD V5 PREMIUM
+   Stockage local, tâches, projets, calendrier,
+   notes, habitudes, concentration et statistiques
+========================================== */
+
+const STORAGE_KEY = "myspace_dashboard_v5";
+const OLD_STORAGE_KEY = "myspace_dashboard_v3";
+
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+const today = () => {
+  const date = new Date();
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0")
+  ].join("-");
+};
+
+const makeId = () =>
+  Date.now().toString(36) +
+  Math.random().toString(36).slice(2, 8);
+
+const escapeHTML = (value = "") =>
+  String(value).replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[character]);
+
+const formatDate = date => {
+  if (!date) return "Sans date";
+
+  const parsed = new Date(date + "T12:00:00");
+
+  if (Number.isNaN(parsed.getTime())) return "Sans date";
+
+  return parsed.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+};
+
+const defaultData = () => ({
+  settings: {
+    name: "",
+    theme: "dark"
+  },
+  tasks: [],
+  projects: [],
+  events: [],
+  notes: [],
+  habits: [],
+  focusGoal: "",
+  focusSessions: 0
+});
+
+function normalizeData(data) {
+  const defaults = defaultData();
+
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return defaults;
+  }
+
+  return {
+    settings: {
+      ...defaults.settings,
+      ...(data.settings || {})
+    },
+    tasks: Array.isArray(data.tasks) ? data.tasks : [],
+    projects: Array.isArray(data.projects) ? data.projects : [],
+    events: Array.isArray(data.events) ? data.events : [],
+    notes: Array.isArray(data.notes) ? data.notes : [],
+    habits: Array.isArray(data.habits) ? data.habits : [],
+    focusGoal: typeof data.focusGoal === "string"
+      ? data.focusGoal
+      : "",
+    focusSessions: Number(data.focusSessions) || 0
+  };
+}
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (saved) {
+      return normalizeData(JSON.parse(saved));
+    }
+
+    /*
+      Tentative de récupération des données V4.
+      L'ancienne version utilisait la clé v3.
+    */
+    const oldSaved = localStorage.getItem(OLD_STORAGE_KEY);
+
+    if (oldSaved) {
+      const parsed = JSON.parse(oldSaved);
+
+      const migrated = normalizeData(parsed);
+
+      saveData(migrated);
+
+      return migrated;
+    }
+  } catch (error) {
+    console.error("Impossible de charger les données :", error);
+  }
+
+  return defaultData();
+}
+
+let data = loadData();
+
+function saveData(value = data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+    return true;
+  } catch (error) {
+    console.error("Impossible de sauvegarder :", error);
+
+    showToast(
+      "Sauvegarde impossible. Vérifie l'espace disponible du navigateur."
+    );
+
+    return false;
+  }
+}
+
+/* ==========================================
+   NOTIFICATIONS
+========================================== */
+
+let toastTimeout;
+
+function showToast(message) {
+  const toast = $("#toast");
+
+  if (!toast) return;
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  clearTimeout(toastTimeout);
+
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2600);
+}
+
+/* ==========================================
+   NAVIGATION
+========================================== */
+
+const pageInformation = {
+  dashboard: {
+    title: "Vue générale",
+    subtitle: "Toutes tes priorités au même endroit."
+  },
+  tasks: {
+    title: "Mes tâches",
+    subtitle: "Organise tes priorités et avance étape par étape."
+  },
+  projects: {
+    title: "Mes projets",
+    subtitle: "Suis l'avancement de tes projets personnels."
+  },
+  calendar: {
+    title: "Calendrier",
+    subtitle: "Retrouve tes événements et tes échéances."
+  },
+  notes: {
+    title: "Notes rapides",
+    subtitle: "Conserve tes idées et informations importantes."
+  },
+  habits: {
+    title: "Mes habitudes",
+    subtitle: "Construis une routine adaptée à ton quotidien."
+  },
+  focus: {
+    title: "Concentration",
+    subtitle: "Consacre du temps à une seule tâche."
+  },
+  statistics: {
+    title: "Statistiques",
+    subtitle: "Découvre tes progrès et ton activité."
+  },
+  settings: {
+    title: "Paramètres",
+    subtitle: "Personnalise ton espace et sauvegarde tes données."
+  }
+};
+
+function navigate(page) {
+  if (!pageInformation[page]) return;
+
+  $$(".content-section").forEach(section => {
+    section.classList.toggle(
+      "active",
+      section.id === "page-" + page
+    );
+  });
+
+  $$("#mainNav button").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.page === page
+    );
+  });
+
+  $("#pageTitle").textContent = pageInformation[page].title;
+  $("#pageSubtitle").textContent = pageInformation[page].subtitle;
+
+  renderAll();
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+$("#mainNav").addEventListener("click", event => {
+  const button = event.target.closest("[data-page]");
+
+  if (button) {
+    navigate(button.dataset.page);
+  }
+});
+
+document.addEventListener("click", event => {
+  const button = event.target.closest("[data-go]");
+
+  if (button) {
+    navigate(button.dataset.go);
+  }
+});
+
+/* ==========================================
+   APPARENCE ET PARAMÈTRES
+========================================== */
+
+function applyTheme(theme) {
+  const selectedTheme = theme === "light" ? "light" : "dark";
+
+  document.body.classList.toggle(
+    "light",
+    selectedTheme === "light"
+  );
+
+  data.settings.theme = selectedTheme;
+
+  if ($("#themeSelect")) {
+    $("#themeSelect").value = selectedTheme;
+  }
+
+  $("#themeButton").textContent =
+    selectedTheme === "light" ? "☾" : "☼";
+}
+
+$("#themeButton").addEventListener("click", () => {
+  const nextTheme =
+    document.body.classList.contains("light") ? "dark" : "light";
+
+  applyTheme(nextTheme);
+  saveData();
+
+  showToast(
+    nextTheme === "light"
+      ? "Mode clair activé"
+      : "Mode sombre activé"
+  );
+});
+
+function renderSettings() {
+  $("#userName").value = data.settings.name || "";
+  $("#themeSelect").value = data.settings.theme || "dark";
+  $("#focusGoal").value = data.focusGoal || "";
+  $("#focusGoalDisplay").textContent =
+    data.focusGoal || "Aucun objectif défini";
+}
+
+$("#saveSettings").addEventListener("click", () => {
+  data.settings.name = $("#userName").value.trim();
+
+  applyTheme($("#themeSelect").value);
+
+  saveData();
+  renderDashboard();
+
+  showToast("Paramètres enregistrés");
+});
+
+$("#themeSelect").addEventListener("change", event => {
+  applyTheme(event.target.value);
+  saveData();
+});
+
+/* ==========================================
+   TÂCHES
+========================================== */
+
+function taskMatchesSearch(task, search) {
+  const text = [
+    task.title,
+    task.description,
+    task.priority,
+    task.dueDate
+  ].join(" ").toLowerCase();
+
+  return text.includes(search.toLowerCase());
+}
+
+function getFilteredTasks() {
+  const search = ($("#taskSearch").value || "").trim();
+  const filter = $("#taskFilter").value;
+  const sort = $("#taskSort").value;
+
+  let tasks = [...data.tasks];
+
+  tasks = tasks.filter(task => taskMatchesSearch(task, search));
+
+  if (filter === "todo") {
+    tasks = tasks.filter(task => !task.done);
+  }
+
+  if (filter === "done") {
+    tasks = tasks.filter(task => task.done);
+  }
+
+  if (filter === "high") {
+    tasks = tasks.filter(
+      task => task.priority === "high" && !task.done
+    );
+  }
+
+  if (sort === "priority") {
+    const priorityRank = {
+      high: 0,
+      medium: 1,
+      low: 2
+    };
+
+    tasks.sort((a, b) =>
+      (priorityRank[a.priority] ?? 3) -
+      (priorityRank[b.priority] ?? 3)
+    );
+  }
+
+  if (sort === "date") {
+    tasks.sort((a, b) => {
+      const first = a.dueDate || "9999-12-31";
+      const second = b.dueDate || "9999-12-31";
+
+      return first.localeCompare(second);
+    });
+  }
+
+  if (sort === "created") {
+    tasks.sort((a, b) =>
+      (b.createdAt || 0) - (a.createdAt || 0)
+    );
+  }
+
+  return tasks;
+}
+
+function renderTaskItem(task) {
+  const priorityLabels = {
+    low: "Basse",
+    medium: "Moyenne",
+    high: "Élevée"
+  };
+
+  const priority = ["low", "medium", "high"].includes(task.priority)
+    ? task.priority
+    : "medium";
+
+  return `
+    <div class="task-item ${task.done ? "done" : ""}">
+      <input
+        class="task-check"
+        type="checkbox"
+        data-action="toggle-task"
+        data-id="${escapeHTML(task.id)}"
+        aria-label="Terminer la tâche"
+        ${task.done ? "checked" : ""}
+      >
+
+      <div class="task-main">
+        <div class="task-title">${escapeHTML(task.title)}</div>
+
+        <div class="task-meta">
+          ${task.dueDate
+            ? "Échéance : " + escapeHTML(formatDate(task.dueDate))
+            : "Aucune échéance"}
+          ${task.projectId ? " · Projet associé" : ""}
+        </div>
+      </div>
+
+      <span class="priority ${priority}">
+        ${priorityLabels[priority]}
+      </span>
+
+      <div class="task-actions">
+        <button
+          class="button small"
+          data-action="edit-task"
+          data-id="${escapeHTML(task.id)}"
+          aria-label="Modifier la tâche"
+        >✎</button>
+
+        <button
+          class="button small danger"
+          data-action="delete-task"
+          data-id="${escapeHTML(task.id)}"
+          aria-label="Supprimer la tâche"
+        >×</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderTasks() {
+  const tasks = getFilteredTasks();
+
+  $("#taskList").innerHTML = tasks.length
+    ? tasks.map(renderTaskItem).join("")
+    : `<div class="empty-state">
+         Aucune tâche à afficher. Ajoute une tâche ou modifie les filtres.
+       </div>`;
+}
+
+$("#taskSearch").addEventListener("input", renderTasks);
+$("#taskFilter").addEventListener("change", renderTasks);
+$("#taskSort").addEventListener("change", renderTasks);
+
+function addOrEditTask(existingTask = null) {
+  const title = prompt(
+    "Nom de la tâche :",
+    existingTask?.title || ""
+  );
+
+  if (title === null) return;
+
+  if (!title.trim()) {
+    showToast("Le nom de la tâche est obligatoire");
+    return;
+  }
+
+  const description = prompt(
+    "Description (facultative) :",
+    existingTask?.description || ""
+  );
+
+  if (description === null) return;
+
+  const dueDate = prompt(
+    "Date limite au format AAAA-MM-JJ (facultative) :",
+    existingTask?.dueDate || ""
+  );
+
+  if (dueDate === null) return;
+
+  if (
+    dueDate.trim() &&
+    !/^\d{4}-\d{2}-\d{2}$/.test(dueDate.trim())
+  ) {
+    showToast("Format de date invalide");
+    return;
+  }
+
+  const priorityAnswer = prompt(
+    "Priorité : low = basse, medium = moyenne, high = élevée",
+    existingTask?.priority || "medium"
+  );
+
+  if (priorityAnswer === null) return;
+
+  const priority = priorityAnswer.trim().toLowerCase();
+
+  if (!["low", "medium", "high"].includes(priority)) {
+    showToast("Priorité invalide");
+    return;
+  }
+
+  let task;
+
+  if (existingTask) {
+    task = {
+      ...existingTask,
+      title: title.trim(),
+      description: description.trim(),
+      dueDate: dueDate.trim(),
+      priority
+    };
+
+    data.tasks = data.tasks.map(item =>
+      item.id === existingTask.id ? task : item
+    );
+  } else {
+    task = {
+      id: makeId(),
+      title: title.trim(),
+      description: description.trim(),
+      dueDate: dueDate.trim(),
+      priority,
+      done: false,
+      projectId: "",
+      createdAt: Date.now()
+    };
+
+    data.tasks.push(task);
+  }
+
+  saveData();
+  renderAll();
+
+  showToast(existingTask ? "Tâche modifiée" : "Tâche ajoutée");
+}
+
+$("#addTaskButton").addEventListener("click", () => {
+  addOrEditTask();
+});
+
+$("#quickAddButton").addEventListener("click", () => {
+  addOrEditTask();
+  navigate("tasks");
+});
+
+document.addEventListener("change", event => {
+  const checkbox = event.target.closest(
+    '[data-action="toggle-task"]'
+  );
+
+  if (!checkbox) return;
+
+  const task = data.tasks.find(
+    item => item.id === checkbox.dataset.id
+  );
+
+  if (!task) return;
+
+  task.done = checkbox.checked;
+
+  saveData();
+  renderAll();
+
+  showToast(
+    task.done ? "Tâche terminée !" : "Tâche rouverte"
+  );
+});
+
+document.addEventListener("click", event => {
+  const button = event.target.closest("[data-action]");
+
+  if (!button) return;
+
+  const { action, id } = button.dataset;
+
+  if (action === "edit-task") {
+    const task = data.tasks.find(item => item.id === id);
+
+    if (task) addOrEditTask(task);
+  }
+
+  if (action === "delete-task") {
+    const task = data.tasks.find(item => item.id === id);
+
+    if (!task) return;
+
+    if (confirm(`Supprimer la tâche « ${task.title} » ?`)) {
+      data.tasks = data.tasks.filter(item => item.id !== id);
+
+      saveData();
+      renderAll();
+
+      showToast("Tâche supprimée");
+    }
+  }
+});
+
+/* ==========================================
+   PROJETS
+========================================== */
+
+function getProjectTasks(projectId) {
+  return data.tasks.filter(task => task.projectId === projectId);
+}
+
+function getProjectProgress(project) {
+  if (typeof project.progress === "number") {
+    return Math.min(100, Math.max(0, project.progress));
+  }
+
+  const tasks = getProjectTasks(project.id);
+
+  if (!tasks.length) return 0;
+
+  const completed = tasks.filter(task => task.done).length;
+
+  return Math.round(completed / tasks.length * 100);
+}
+
+function renderProject(project) {
+  const progress = getProjectProgress(project);
+
+  return `
+    <article class="panel">
+      <div class="panel-heading">
+        <h2>${escapeHTML(project.name)}</h2>
+        <span class="priority ${progress === 100 ? "low" : "medium"}">
+          ${progress === 100 ? "Terminé" : "En cours"}
+        </span>
+      </div>
+
+      <p class="muted" style="font-size:12px;line-height:1.7">
+        ${escapeHTML(project.description || "Aucune description")}
+      </p>
+
+      <div class="progress-track">
+        <div class="progress-fill" style="width:${progress}%"></div>
+      </div>
+
+      <div class="progress-caption">
+        <span>Progression</span>
+        <strong>${progress}%</strong>
+      </div>
+
+      <div class="toolbar" style="margin-top:16px;margin-bottom:0">
+        <button
+          class="button small"
+          data-action="edit-project"
+          data-id="${escapeHTML(project.id)}"
+        >Modifier</button>
+
+        <button
+          class="button small"
+          data-action="project-tasks"
+          data-id="${escapeHTML(project.id)}"
+        >Voir les tâches</button>
+
+        <button
+          class="button small danger"
+          data-action="delete-project"
+          data-id="${escapeHTML(project.id)}"
+        >Supprimer</button>
+      </div>
+    </article>
+  `;
+}
+
+function renderProjects() {
+  $("#projectList").innerHTML = data.projects.length
+    ? data.projects.map(renderProject).join("")
+    : `<div class="empty-state" style="grid-column:1/-1">
+         Aucun projet pour le moment. Crée ton premier projet.
+       </div>`;
+
+  $("#dashboardProjects").innerHTML = data.projects.length
+    ? data.projects.slice(0, 3).map(project => {
+        const progress = getProjectProgress(project);
+
+        return `
+          <div class="project-item">
+            <strong>${escapeHTML(project.name)}</strong>
+
+            <div class="progress-track">
+              <div class="progress-fill" style="width:${progress}%"></div>
+            </div>
+
+            <div class="progress-caption">
+              <span>${progress}% terminé</span>
+              <span>${getProjectTasks(project.id).length} tâche(s)</span>
+            </div>
+          </div>
+        `;
+      }).join("")
+    : `<div class="empty-state">Aucun projet créé.</div>`;
+}
+
+function addOrEditProject(existing = null) {
+  const name = prompt(
+    "Nom du projet :",
+    existing?.name || ""
+  );
+
+  if (name === null) return;
+
+  if (!name.trim()) {
+    showToast("Le nom du projet est obligatoire");
+    return;
+  }
+
+  const description = prompt(
+    "Description du projet :",
+    existing?.description || ""
+  );
+
+  if (description === null) return;
+
+  if (existing) {
+    data.projects = data.projects.map(project =>
+      project.id === existing.id
+        ? {
+            ...project,
+            name: name.trim(),
+            description: description.trim()
+          }
+        : project
+    );
+  } else {
+    data.projects.push({
+      id: makeId(),
+      name: name.trim(),
+      description: description.trim(),
+      progress: 0,
+      createdAt: Date.now()
+    });
+  }
+
+  saveData();
+  renderAll();
+
+  showToast(existing ? "Projet modifié" : "Projet créé");
+}
+
+$("#addProjectButton").addEventListener("click", () => {
+  addOrEditProject();
+});
+
+document.addEventListener("click", event => {
+  const button = event.target.closest("[data-action]");
+
+  if (!button) return;
+
+  const { action, id } = button.dataset;
+
+  if (action === "edit-project") {
+    const project = data.projects.find(item => item.id === id);
+
+    if (project) addOrEditProject(project);
+  }
+
+  if (action === "delete-project") {
+    const project = data.projects.find(item => item.id === id);
+
+    if (!project) return;
+
+    if (confirm(
+      `Supprimer le projet « ${project.name} » ? Les tâches seront conservées.`
+    )) {
+      data.projects = data.projects.filter(item => item.id !== id);
+
+      data.tasks = data.tasks.map(task =>
+        task.projectId === id
+          ? { ...task, projectId: "" }
+          : task
+      );
+
+      saveData();
+      renderAll();
+
+      showToast("Projet supprimé");
+    }
+  }
+
+  if (action === "project-tasks") {
+    const project = data.projects.find(item => item.id === id);
+
+    if (!project) return;
+
+    navigate("tasks");
+
+    $("#taskSearch").value = "";
+
+    $("#taskList").innerHTML = data.tasks.filter(
+      task => task.projectId === id
+    ).map(renderTaskItem).join("") ||
+      `<div class="empty-state">Aucune tâche associée à ce projet.</div>`;
+  }
+});
+
+/* ==========================================
+   CALENDRIER ET ÉVÉNEMENTS
+========================================== */
+
+let calendarDate = new Date();
+let selectedDate = today();
+
+const weekdays = [
+  "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"
+];
+
+function renderCalendar() {
+  const year = calendarDate.getFullYear();
+  const month = calendarDate.getMonth();
+
+  $("#calendarMonth").textContent =
+    calendarDate.toLocaleDateString("fr-FR", {
+      month: "long",
+      year: "numeric"
+    });
+
+  $("#calendarWeekdays").innerHTML = weekdays.map(day =>
+    `<div class="calendar-weekday">${day}</div>`
+  ).join("");
+
+  const firstDay = new Date(year, month, 1);
+  const offset = (firstDay.getDay() + 6) % 7;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const previousMonthDays = new Date(year, month, 0).getDate();
+
+  let html = "";
+
+  for (let i = 0; i < 42; i++) {
+    let day;
+    let date;
+    let muted = false;
+
+    if (i < offset) {
+      day = previousMonthDays - offset + i + 1;
+
+      const d = new Date(year, month - 1, day);
+
+      date = [
+        d.getFullYear(),
+        String(d.getMonth() + 1).padStart(2, "0"),
+        String(d.getDate()).padStart(2, "0")
+      ].join("-");
+
+      muted = true;
+    } else if (i >= offset + daysInMonth) {
+      day = i - offset - daysInMonth + 1;
+
+      const d = new Date(year, month + 1, day);
+
+      date = [
+        d.getFullYear(),
+        String(d.getMonth() + 1).padStart(2, "0"),
+        String(d.getDate()).padStart(2, "0")
+      ].join("-");
+
+      muted = true;
+    } else {
+      day = i - offset + 1;
+
+      date = [
+        year,
+        String(month + 1).padStart(2, "0"),
+        String(day).padStart(2, "0")
+      ].join("-");
+    }
+
+    const count = data.events.filter(event =>
+      event.date === date
+    ).length;
+
+    const isToday = date === today();
+    const isSelected = date === selectedDate;
+
+    html += `
+      <button
+        class="calendar-day
+          ${muted ? "muted-day" : ""}
+          ${isToday ? "today" : ""}
+          ${isSelected ? "selected" : ""}"
+        data-date="${date}"
+      >
+        ${day}
+        ${count ? `<small>${count} événement(s)</small>` : ""}
+      </button>
+    `;
+  }
+
+  $("#calendarGrid").innerHTML = html;
+
+  $("#selectedDateTitle").textContent =
+    "Événements du " + formatDate(selectedDate);
+
+  renderEventsForDate(selectedDate);
+}
+
+function renderEventsForDate(date) {
+  const events = data.events
+    .filter(event => event.date === date)
+    .sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+
+  $("#calendarEvents").innerHTML = events.length
+    ? events.map(event => `
+        <div class="event-item">
+          <div style="display:flex;justify-content:space-between;gap:12px">
+            <strong>${escapeHTML(event.title)}</strong>
+            <button
+              class="button small danger"
+              data-action="delete-event"
+              data-id="${escapeHTML(event.id)}"
+            >×</button>
+          </div>
+
+          <div class="task-meta">
+            ${event.time ? escapeHTML(event.time) + " · " : ""}
+            ${escapeHTML(formatDate(event.date))}
+          </div>
+
+          ${event.description
+            ? `<p class="muted" style="font-size:12px">
+                 ${escapeHTML(event.description)}
+               </p>`
+            : ""}
+        </div>
+      `).join("")
+    : `<div class="empty-state">Aucun événement prévu pour cette date.</div>`;
+}
+
+function addEvent() {
+  const title = prompt("Nom de l'événement :");
+
+  if (title === null) return;
+
+  if (!title.trim()) {
+    showToast("Le nom de l'événement est obligatoire");
+    return;
+  }
+
+  const date = prompt(
+    "Date au format AAAA-MM-JJ :",
+    selectedDate
+  );
+
+  if (date === null) return;
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    showToast("Format de date invalide");
+    return;
+  }
+
+  const time = prompt("Heure (facultative, ex. 14:30) :", "");
+
+  if (time === null) return;
+
+  if (time.trim() && !/^([01]\d|2[0-3]):[0-5]\d$/.test(time.trim())) {
+    showToast("Format d'heure invalide");
+    return;
+  }
+
+  const description = prompt("Description (facultative) :", "");
+
+  if (description === null) return;
+
+  data.events.push({
+    id: makeId(),
+    title: title.trim(),
+    date,
+    time: time.trim(),
+    description: description.trim()
+  });
+
+  selectedDate = date;
+
+  const parsed = new Date(date + "T12:00:00");
+
+  calendarDate = new Date(
+    parsed.getFullYear(),
+    parsed.getMonth(),
+    1
+  );
+
+  saveData();
+  renderAll();
+
+  showToast("Événement ajouté");
+}
+
+$("#addEventButton").addEventListener("click", addEvent);
+
+$("#prevMonth").addEventListener("click", () => {
+  calendarDate.setMonth(calendarDate.getMonth() - 1);
+  renderCalendar();
+});
+
+$("#nextMonth").addEventListener("click", () => {
+  calendarDate.setMonth(calendarDate.getMonth() + 1);
+  renderCalendar();
+});
+
+$("#calendarGrid").addEventListener("click", event => {
+  const button = event.target.closest("[data-date]");
+
+  if (!button) return;
+
+  selectedDate = button.dataset.date;
+
+  const parsed = new Date(selectedDate + "T12:00:00");
+
+  calendarDate = new Date(
+    parsed.getFullYear(),
+    parsed.getMonth(),
+    1
+  );
+
+  renderCalendar();
+});
+
+document.addEventListener("click", event => {
+  const button = event.target.closest('[data-action="delete-event"]');
+
+  if (!button) return;
+
+  const eventItem = data.events.find(
+    item => item.id === button.dataset.id
+  );
+
+  if (!eventItem) return;
+
+  if (confirm(`Supprimer « ${eventItem.title} » ?`)) {
+    data.events = data.events.filter(
+      item => item.id !== eventItem.id
+    );
+
+    saveData();
+    renderAll();
+
+    showToast("Événement supprimé");
+  }
+});
+
+/* ==========================================
+   NOTES RAPIDES
+========================================== */
+
+function renderNotes() {
+  $("#noteList").innerHTML = data.notes.length
+    ? data.notes.map(note => `
+        <article class="note-item">
+          <div class="panel-heading">
+            <div class="note-title">${escapeHTML(note.title)}</div>
+
+            <button
+              class="button small danger"
+              data-action="delete-note"
+              data-id="${escapeHTML(note.id)}"
+            >×</button>
+          </div>
+
+          <div>${escapeHTML(note.content)}</div>
+
+          <div class="task-meta">
+            Modifiée le ${escapeHTML(formatDate(note.date))}
+          </div>
+
+          <button
+            class="button small"
+            style="margin-top:12px"
+            data-action="edit-note"
+            data-id="${escapeHTML(note.id)}"
+          >Modifier</button>
+        </article>
+      `).join("")
+    : `<div class="empty-state" style="grid-column:1/-1">
+         Aucune note enregistrée.
+       </div>`;
+}
+
+function addOrEditNote(existing = null) {
+  const title = prompt(
+    "Titre de la note :",
+    existing?.title || ""
+  );
+
+  if (title === null) return;
+
+  if (!title.trim()) {
+    showToast("Le titre est obligatoire");
+    return;
+  }
+
+  const content = prompt(
+    "Contenu de la note :",
+    existing?.content || ""
+  );
+
+  if (content === null) return;
+
+  if (existing) {
+    data.notes = data.notes.map(note =>
+      note.id === existing.id
+        ? {
+            ...note,
+            title: title.trim(),
+            content,
+            date: today()
+          }
+        : note
+    );
+  } else {
+    data.notes.push({
+      id: makeId(),
+      title: title.trim(),
+      content,
+      date: today()
+    });
+  }
+
+  saveData();
+  renderAll();
+
+  showToast(existing ? "Note modifiée" : "Note enregistrée");
+}
+
+$("#addNoteButton").addEventListener("click", () => {
+  addOrEditNote();
+});
+
+document.addEventListener("click", event => {
+  const button = event.target.closest("[data-action]");
+
+  if (!button) return;
+
+  const { action, id } = button.dataset;
+
+  if (action === "edit-note") {
+    const note = data.notes.find(item => item.id === id);
+
+    if (note) addOrEditNote(note);
+  }
+
+  if (action === "delete-note") {
+    if (confirm("Supprimer cette note ?")) {
+      data.notes = data.notes.filter(item => item.id !== id);
+
+      saveData();
+      renderAll();
+
+      showToast("Note supprimée");
+    }
+  }
+});
+
+/* ==========================================
+   HABITUDES
+========================================== */
+
+function renderHabits() {
+  const completed = data.habits.filter(habit =>
+    Array.isArray(habit.completedDates) &&
+    habit.completedDates.includes(today())
+  ).length;
+
+  const total = data.habits.length;
+
+  const percentage = total
+    ? Math.round(completed / total * 100)
+    : 0;
+
+  $("#habitProgressLabel").textContent =
+    `${completed} / ${total} terminée(s)`;
+
+  $("#habitProgressBar").style.width = percentage + "%";
+
+  $("#habitList").innerHTML = total
+    ? data.habits.map(habit => {
+        const completedToday =
+          (habit.completedDates || []).includes(today());
+
+        const count = (habit.completedDates || []).length;
+
+        return `
+          <div class="habit-item">
+            <label>
+              <input
+                type="checkbox"
+                data-action="toggle-habit"
+                data-id="${escapeHTML(habit.id)}"
+                ${completedToday ? "checked" : ""}
+              >
+              <span>${escapeHTML(habit.name)}</span>
+            </label>
+
+            <span class="habit-count">${count} jour(s)</span>
+
+            <button
+              class="button small danger"
+              data-action="delete-habit"
+              data-id="${escapeHTML(habit.id)}"
+            >×</button>
+          </div>
+        `;
+      }).join("")
+    : `<div class="empty-state">Ajoute une habitude pour commencer ton suivi.</div>`;
+
+  $("#dashboardHabits").innerHTML = total
+    ? data.habits.slice(0, 4).map(habit => {
+        const done = (habit.completedDates || []).includes(today());
+
+        return `
+          <div class="habit-item">
+            <label>
+              <input
+                type="checkbox"
+                data-action="toggle-habit"
+                data-id="${escapeHTML(habit.id)}"
+                ${done ? "checked" : ""}
+              >
+              <span>${escapeHTML(habit.name)}</span>
+            </label>
+            <span class="habit-count">${done ? "Fait ✓" : "À faire"}</span>
+          </div>
+        `;
+      }).join("")
+    : `<div class="empty-state">Aucune habitude définie.</div>`;
+}
+
+$("#addHabitButton").addEventListener("click", () => {
+  const name = prompt("Nom de la nouvelle habitude :");
+
+  if (name === null) return;
+
+  if (!name.trim()) {
+    showToast("Le nom de l'habitude est obligatoire");
+    return;
+  }
+
+  data.habits.push({
+    id: makeId(),
+    name: name.trim(),
+    completedDates: []
+  });
+
+  saveData();
+  renderAll();
+
+  showToast("Habitude ajoutée");
+});
+
+document.addEventListener("change", event => {
+  const checkbox = event.target.closest('[data-action="toggle-habit"]');
+
+  if (!checkbox) return;
+
+  const habit = data.habits.find(
+    item => item.id === checkbox.dataset.id
+  );
+
+  if (!habit) return;
+
+  habit.completedDates = Array.isArray(habit.completedDates)
+    ? habit.completedDates
+    : [];
+
+  if (checkbox.checked) {
+    if (!habit.completedDates.includes(today())) {
+      habit.completedDates.push(today());
+    }
+  } else {
+    habit.completedDates = habit.completedDates.filter(
+      date => date !== today()
+    );
+  }
+
+  saveData();
+  renderAll();
+});
+
+document.addEventListener("click", event => {
+  const button = event.target.closest('[data-action="delete-habit"]');
+
+  if (!button) return;
+
+  if (confirm("Supprimer cette habitude et son historique ?")) {
+    data.habits = data.habits.filter(
+      habit => habit.id !== button.dataset.id
+    );
+
+    saveData();
+    renderAll();
+
+    showToast("Habitude supprimée");
+  }
+});
+
+/* ==========================================
+   MINUTEUR POMODORO
+========================================== */
+
+let timerDuration = 25 * 60;
+let timerRemaining = timerDuration;
+let timerInterval = null;
+let timerRunning = false;
+
+function renderTimer() {
+  const minutes = Math.floor(timerRemaining / 60);
+  const seconds = timerRemaining % 60;
+
+  $("#timerDisplay").textContent =
+    String(minutes).padStart(2, "0") +
+    ":" +
+    String(seconds).padStart(2, "0");
+
+  $("#timerStart").textContent =
+    timerRunning ? "Mettre en pause" : "Démarrer";
+}
+
+function stopTimer() {
+  if (timerInterval !== null) {
+    clearInterval(timerInterval);
+  }
+
+  timerInterval = null;
+  timerRunning = false;
+
+  renderTimer();
+}
+
+function selectTimer(minutes, selectedButton) {
+  stopTimer();
+
+  timerDuration = minutes * 60;
+  timerRemaining = timerDuration;
+
+  $$(".timer-mode button").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button === selectedButton
+    );
+  });
+
+  renderTimer();
+}
+
+$$(".timer-mode button").forEach(button => {
+  button.addEventListener("click", () => {
+    selectTimer(Number(button.dataset.minutes), button);
+  });
+});
+
+$("#timerStart").addEventListener("click", () => {
+  if (timerRunning) {
+    stopTimer();
+    return;
+  }
+
+  if (timerRemaining <= 0) {
+    timerRemaining = timerDuration;
+  }
+
+  timerRunning = true;
+  renderTimer();
+
+  timerInterval = setInterval(() => {
+    timerRemaining--;
+
+    if (timerRemaining <= 0) {
+      timerRemaining = 0;
+      stopTimer();
+
+      const selectedMode = $(".timer-mode button.active");
+
+      if (Number(selectedMode?.dataset.minutes) === 25) {
+        data.focusSessions = (data.focusSessions || 0) + 1;
+        saveData();
+      }
+
+      renderAll();
+      showToast("Session terminée ! Pense à faire une pause.");
+
+      try {
+        document.title = "Session terminée — MySpace";
+      } catch (_) {}
+    } else {
+      renderTimer();
+    }
+  }, 1000);
+});
+
+$("#timerReset").addEventListener("click", () => {
+  stopTimer();
+  timerRemaining = timerDuration;
+  renderTimer();
+
+  showToast("Minuteur réinitialisé");
+});
+
+$("#saveFocusGoal").addEventListener("click", () => {
+  data.focusGoal = $("#focusGoal").value.trim();
+
+  saveData();
+
+  $("#focusGoalDisplay").textContent =
+    data.focusGoal || "Aucun objectif défini";
+
+  showToast("Objectif de concentration enregistré");
+});
+
+/* ==========================================
+   STATISTIQUES
+========================================== */
+
+function renderStatistics() {
+  const total = data.tasks.length;
+  const completed = data.tasks.filter(task => task.done).length;
+  const remaining = total - completed;
+
+  const rate = total
+    ? Math.round(completed / total * 100)
+    : 0;
+
+  $("#analyticsDone").textContent = completed;
+  $("#analyticsRate").textContent = rate + "%";
+  $("#analyticsProjects").textContent = data.projects.length;
+  $("#analyticsNotes").textContent = data.notes.length;
+
+  const maximum = Math.max(completed, remaining, 1);
+
+  $("#taskChart").innerHTML = `
+    <div class="chart-bar-wrap">
+      <div
+        class="chart-bar"
+        style="height:${Math.max(3, completed / maximum * 100)}%"
+        title="${completed} tâche(s) terminée(s)"
+      ></div>
+      <div class="chart-label">Terminées</div>
+      <strong>${completed}</strong>
+    </div>
+
+    <div class="chart-bar-wrap">
+      <div
+        class="chart-bar"
+        style="height:${Math.max(3, remaining / maximum * 100)}%"
+        title="${remaining} tâche(s) restante(s)"
+      ></div>
+      <div class="chart-label">Restantes</div>
+      <strong>${remaining}</strong>
+    </div>
+
+    <div class="chart-bar-wrap">
+      <div
+        class="chart-bar"
+        style="height:${Math.max(3, data.projects.length / Math.max(data.projects.length, 1) * 100)}%"
+        title="${data.projects.length} projet(s)"
+      ></div>
+      <div class="chart-label">Projets</div>
+      <strong>${data.projects.length}</strong>
+    </div>
+
+    <div class="chart-bar-wrap">
+      <div
+        class="chart-bar"
+        style="height:${Math.max(3, data.notes.length / Math.max(data.notes.length, 1) * 100)}%"
+        title="${data.notes.length} note(s)"
+      ></div>
+      <div class="chart-label">Notes</div>
+      <strong>${data.notes.length}</strong>
+    </div>
+  `;
+}
+
+/* ==========================================
+   TABLEAU DE BORD
+========================================== */
+
+function renderDashboard() {
+  const completed = data.tasks.filter(task => task.done).length;
+  const remaining = data.tasks.filter(task => !task.done).length;
+
+  const rate = data.tasks.length
+    ? Math.round(completed / data.tasks.length * 100)
+    : 0;
+
+  $("#statDone").textContent = completed;
+  $("#statTodo").textContent = remaining;
+
+  $("#statProjects").textContent = data.projects.filter(project =>
+    getProjectProgress(project) < 100
+  ).length;
+
+  $("#statProgress").textContent = rate + "%";
+
+  const name = (data.settings.name || "").trim();
+
+  $("#welcomeTitle").textContent = name
+    ? `Bienvenue, ${name} !`
+    : "Bienvenue sur ton espace !";
+
+  $("#todayLabel").textContent =
+    new Date().toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+
+  const nextTasks = data.tasks
+    .filter(task => !task.done)
+    .sort((a, b) => {
+      const aDate = a.dueDate || "9999-12-31";
+      const bDate = b.dueDate || "9999-12-31";
+
+      return aDate.localeCompare(bDate);
+    })
+    .slice(0, 5);
+
+  $("#dashboardTasks").innerHTML = nextTasks.length
+    ? nextTasks.map(renderTaskItem).join("")
+    : `<div class="empty-state">Toutes tes tâches sont terminées, ou aucune tâche n'a été ajoutée.</div>`;
+
+  const events = data.events
+    .filter(event => event.date === today())
+    .sort((a, b) => (a.time || "").localeCompare(b.time || ""));
+
+  $("#dashboardEvents").innerHTML = events.length
+    ? events.map(event => `
+        <div class="event-item">
+          <strong>${escapeHTML(event.title)}</strong>
+          <div class="task-meta">
+            ${event.time ? escapeHTML(event.time) + " · " : ""}
+            ${escapeHTML(formatDate(event.date))}
+          </div>
+        </div>
+      `).join("")
+    : `<div class="empty-state">Aucun événement prévu aujourd'hui.</div>`;
+}
+
+/* ==========================================
+   IMPORTATION ET EXPORTATION
+========================================== */
+
+$("#exportData").addEventListener("click", () => {
+  const content = JSON.stringify(data, null, 2);
+
+  const blob = new Blob([content], {
+    type: "application/json;charset=utf-8"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+
+  link.download =
+    "myspace-dashboard-" + today() + ".json";
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  URL.revokeObjectURL(url);
+
+  showToast("Exportation lancée");
+});
+
+$("#importData").addEventListener("click", () => {
+  $("#importFile").click();
+});
+
+$("#importFile").addEventListener("change", async event => {
+  const file = event.target.files?.[0];
+
+  if (!file) return;
+
+  try {
+    const textContent = await file.text();
+    const parsed = JSON.parse(textContent);
+
+    if (
+      !parsed ||
+      typeof parsed !== "object" ||
+      Array.isArray(parsed)
+    ) {
+      throw new Error("Format JSON incorrect");
+    }
+
+    const imported = normalizeData(parsed);
+
+    if (!confirm(
+      "Importer cette sauvegarde remplacera les données actuellement enregistrées. Continuer ?"
+    )) {
+      event.target.value = "";
+      return;
+    }
+
+    data = imported;
+
+    saveData();
+    applyTheme(data.settings.theme);
+    renderAll();
+
+    showToast("Sauvegarde importée");
+  } catch (error) {
+    console.error(error);
+
+    showToast("Fichier invalide ou impossible à importer");
+  }
+
+  event.target.value = "";
+});
+
+/* ==========================================
+   RÉINITIALISATION
+========================================== */
+
+$("#resetData").addEventListener("click", () => {
+  const confirmation = confirm(
+    "Attention : cette action effacera les tâches, projets, événements, notes et habitudes enregistrés dans MySpace Dashboard. Continuer ?"
+  );
+
+  if (!confirmation) return;
+
+  data = defaultData();
+
+  saveData();
+  applyTheme(data.settings.theme);
+  renderAll();
+
+  showToast("Données réinitialisées");
+});
+
+/* ==========================================
+   RENDU GLOBAL
+========================================== */
+
+function renderAll() {
+  renderTasks();
+  renderProjects();
+  renderCalendar();
+  renderNotes();
+  renderHabits();
+  renderStatistics();
+  renderDashboard();
+  renderSettings();
+  renderTimer();
+}
+
+/* ==========================================
+   INITIALISATION
+========================================== */
+
+applyTheme(data.settings.theme || "dark");
+
+renderAll();
+
+console.log("MySpace Dashboard V5 Premium est initialisé.");
 </script>
+
 </body>
 </html>
