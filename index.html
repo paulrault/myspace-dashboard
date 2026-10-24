@@ -3,462 +3,510 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MySpace Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1120">
+<title>MySpace Dashboard V2</title>
 <style>
 :root {
-  --bg:#0b1120;
-  --panel:#131e31;
-  --panel2:#192941;
-  --text:#edf4ff;
-  --muted:#9aaec8;
-  --blue:#60a5fa;
-  --border:#293b54;
-  --green:#34d399;
-  --red:#fb7185;
+  --bg:#0b1120;--panel:#131e31;--panel2:#1b2b43;
+  --text:#edf4ff;--muted:#9aaec8;--blue:#60a5fa;
+  --border:#293b54;--green:#34d399;--red:#fb7185;
+  --yellow:#fbbf24;
 }
 body.light {
-  --bg:#edf3fa;
-  --panel:#ffffff;
-  --panel2:#e8f0fb;
-  --text:#14243b;
-  --muted:#63748b;
-  --blue:#2563eb;
-  --border:#d6e1ef;
+  --bg:#edf3fa;--panel:#fff;--panel2:#e8f0fb;
+  --text:#14243b;--muted:#63748b;--blue:#2563eb;
+  --border:#d6e1ef;--green:#059669;--red:#e11d48;
+  --yellow:#b45309;
 }
-* {box-sizing:border-box}
-body {
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:Arial,sans-serif;transition:.2s;
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{
+  outline:2px solid var(--blue);outline-offset:3px
 }
-button,input {font:inherit}
-button {cursor:pointer}
-.layout {display:flex;min-height:100vh}
-aside {
-  width:235px;background:var(--panel);
-  border-right:1px solid var(--border);
-  padding:26px 18px;flex-shrink:0;
-}
-.brand {font-size:21px;font-weight:bold;margin:0 0 35px}
-.brand span {color:var(--blue)}
-.nav-title {color:var(--muted);font-size:11px;
-  text-transform:uppercase;letter-spacing:1.5px;margin:25px 10px 12px}
-.nav button {
-  display:block;width:100%;text-align:left;padding:12px;
-  border:0;border-radius:9px;background:transparent;
-  color:var(--muted);margin:4px 0;
-}
-.nav button:hover,.nav button.active {
-  background:var(--panel2);color:var(--blue)
-}
-main {flex:1;min-width:0;padding:28px;max-width:1500px;margin:auto;width:100%}
-.topbar {display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:30px}
-h1 {font-size:28px;margin:0 0 8px}
-h2 {font-size:17px;margin:0 0 18px}
-p {color:var(--muted);line-height:1.5}
-.small {font-size:13px;color:var(--muted)}
-.actions {display:flex;gap:9px;align-items:center}
-.btn {
-  padding:10px 14px;border:1px solid var(--border);
-  border-radius:9px;background:var(--panel2);color:var(--text)
-}
-.btn.primary {background:var(--blue);color:#071426;border-color:var(--blue);font-weight:bold}
-.grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:22px}
-.card {
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:15px;padding:20px;min-width:0;
-}
-.stat-label {font-size:13px;color:var(--muted)}
-.stat-number {font-size:30px;font-weight:bold;margin:12px 0 7px}
-.stat-icon {font-size:22px;float:right}
-.content-grid {display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,1fr);gap:18px}
-.section {margin-bottom:20px}
-.input-row {display:flex;gap:8px;margin-bottom:18px}
-input {
-  width:100%;min-width:0;padding:12px;
-  border:1px solid var(--border);border-radius:8px;
-  background:var(--bg);color:var(--text)
-}
-.task-list {list-style:none;padding:0;margin:0}
-.task {
-  display:flex;align-items:center;gap:10px;
-  padding:13px 0;border-bottom:1px solid var(--border)
-}
-.task:last-child {border-bottom:0}
-.task input {width:17px;height:17px;accent-color:var(--blue)}
-.task span {flex:1;overflow-wrap:anywhere}
-.task.done span {text-decoration:line-through;color:var(--muted)}
-.delete {border:0;background:transparent;color:var(--red);font-size:18px}
-.progress {height:7px;background:var(--panel2);border-radius:8px;overflow:hidden;margin:12px 0}
-.progress div {height:100%;background:var(--blue);border-radius:8px}
-.project {padding:13px 0;border-bottom:1px solid var(--border)}
-.project:last-child {border-bottom:0}
-.project-top {display:flex;justify-content:space-between;gap:8px}
-.project-top strong {font-size:14px}
-.project-top span {color:var(--muted);font-size:12px}
-.links {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.shortcut {
-  text-decoration:none;color:var(--text);background:var(--panel2);
-  border:1px solid var(--border);padding:15px;border-radius:10px;
-  display:block;overflow-wrap:anywhere
-}
-.shortcut:hover {border-color:var(--blue)}
-.shortcut small {display:block;color:var(--muted);margin-top:7px}
-.view {display:none}
-.view.active {display:block}
-.empty {color:var(--muted);font-size:14px;padding:12px 0}
-footer {text-align:center;color:var(--muted);font-size:12px;padding:28px 0}
-#clock {font-size:13px;color:var(--muted);margin-top:7px}
-@media(max-width:950px) {
-  .grid {grid-template-columns:repeat(2,minmax(0,1fr))}
-  .content-grid {grid-template-columns:1fr}
-}
-@media(max-width:650px) {
-  .layout {display:block}
-  aside {width:100%;padding:15px;border-right:0;border-bottom:1px solid var(--border)}
-  .brand {margin:0 0 12px}
-  .nav-title {display:none}
-  .nav {display:flex;gap:5px;overflow-x:auto}
-  .nav button {width:auto;white-space:nowrap;margin:0;padding:10px}
-  main {padding:18px 13px}
-  .topbar {align-items:flex-start;flex-direction:column}
-  h1 {font-size:24px}
-  .grid {gap:9px}
-  .card {padding:14px}
-  .stat-number {font-size:25px}
+.layout{display:flex;min-height:100vh}
+aside{width:235px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);padding:25px 16px}
+.brand{font-size:22px;font-weight:bold;margin:0 8px 35px}
+.brand span{color:var(--blue)}
+.nav-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:25px 10px 12px}
+.nav button{display:block;width:100%;text-align:left;padding:12px;border:0;border-radius:9px;background:transparent;color:var(--muted);margin:4px 0}
+.nav button:hover,.nav button.active{background:var(--panel2);color:var(--blue)}
+main{flex:1;min-width:0;max-width:1500px;width:100%;margin:auto;padding:28px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:25px}
+h1{font-size:28px;margin:0 0 8px}
+h2{font-size:18px;margin:0 0 17px}
+p{color:var(--muted);line-height:1.5}
+.small{font-size:12px;color:var(--muted)}
+.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{padding:10px 13px;border:1px solid var(--border);border-radius:9px;background:var(--panel2);color:var(--text)}
+.btn.primary{background:var(--blue);color:#071426;border-color:var(--blue);font-weight:bold}
+.btn.danger{color:var(--red)}
+.searchbar{width:min(340px,100%);padding:11px 13px;border:1px solid var(--border);border-radius:9px;background:var(--panel);color:var(--text)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.toolbar select,.field{padding:11px;border:1px solid var(--border);border-radius:9px;background:var(--panel);color:var(--text);min-width:0}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:20px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;min-width:0}
+.stat-label{font-size:13px;color:var(--muted)}
+.stat-number{font-size:30px;font-weight:bold;margin:12px 0 6px}
+.stat-icon{float:right;font-size:21px}
+.content-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(250px,1fr);gap:17px}
+.section{margin-bottom:18px}
+.form-grid{display:grid;grid-template-columns:minmax(0,1fr) 150px 135px 155px auto;gap:8px;margin-bottom:18px}
+.task-list{list-style:none;padding:0;margin:0}
+.task{display:flex;align-items:flex-start;gap:10px;padding:13px 0;border-bottom:1px solid var(--border)}
+.task:last-child{border-bottom:0}
+.task input[type=checkbox]{width:17px;height:17px;margin-top:3px;accent-color:var(--blue)}
+.task-body{flex:1;min-width:0;overflow-wrap:anywhere}
+.task-title{display:block;font-size:14px}
+.task.done .task-title{text-decoration:line-through;color:var(--muted)}
+.task-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.tag{display:inline-block;font-size:11px;padding:4px 7px;border-radius:6px;background:var(--panel2);color:var(--muted)}
+.tag.high{color:var(--red)}
+.tag.medium{color:var(--yellow)}
+.tag.low{color:var(--green)}
+.delete{border:0;background:transparent;color:var(--red);font-size:18px}
+.progress{height:7px;background:var(--panel2);border-radius:8px;overflow:hidden;margin:12px 0}
+.progress div{height:100%;background:var(--blue);transition:width .2s}
+.project{padding:13px 0;border-bottom:1px solid var(--border)}
+.project:last-child{border-bottom:0}
+.project-top{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.project-top span{color:var(--muted)}
+.project-controls{display:flex;align-items:center;gap:8px;margin-top:10px}
+.project-controls input{flex:1;min-width:0;accent-color:var(--blue)}
+.links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.shortcut{display:block;text-decoration:none;color:var(--text);background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:15px;overflow-wrap:anywhere}
+.shortcut:hover{border-color:var(--blue)}
+.shortcut small{display:block;color:var(--muted);margin-top:7px}
+.view{display:none}
+.view.active{display:block}
+.empty{padding:15px 0;color:var(--muted);font-size:14px}
+.calendar-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}
+.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.weekday{text-align:center;color:var(--muted);font-size:12px;padding:8px 0}
+.day{min-height:65px;border:1px solid var(--border);border-radius:8px;background:var(--panel2);color:var(--text);padding:8px 4px;text-align:center}
+.day.muted-day{opacity:.35}
+.day.today{border:2px solid var(--blue)}
+.day.selected{background:var(--blue);color:#071426}
+.day-count{font-size:11px;display:block;margin-top:7px}
+.bar-row{display:grid;grid-template-columns:105px minmax(0,1fr) 45px;gap:10px;align-items:center;margin:17px 0;font-size:13px}
+.bar-track{height:11px;border-radius:8px;background:var(--panel2);overflow:hidden}
+.bar-fill{height:100%;background:var(--blue);border-radius:8px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:25px 0}
+@media(max-width:1050px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.content-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid .wide{grid-column:1/-1}}
+@media(max-width:650px){
+ .layout{display:block}aside{width:100%;padding:15px;border-right:0;border-bottom:1px solid var(--border)}
+ .brand{margin:0 0 12px}.nav-title{display:none}.nav{display:flex;gap:4px;overflow-x:auto}
+ .nav button{width:auto;white-space:nowrap;margin:0;padding:10px}
+ main{padding:18px 12px}.topbar{align-items:flex-start;flex-direction:column}
+ h1{font-size:24px}.grid{gap:9px}.card{padding:14px}.stat-number{font-size:25px}
+ .form-grid{grid-template-columns:1fr}.form-grid .wide{grid-column:auto}
+ .day{min-height:48px;padding:5px 1px;font-size:12px}.weekday{font-size:10px}
+ .calendar{gap:3px}.bar-row{grid-template-columns:80px minmax(0,1fr) 35px;gap:6px}
 }
 </style>
 </head>
 <body>
 <div class="layout">
-  <aside>
-    <div class="brand">MySpace <span>●</span></div>
-    <div class="nav-title">Espace personnel</div>
-    <nav class="nav">
-      <button class="active" data-view="dashboard">⌂ Tableau de bord</button>
-      <button data-view="tasks">✓ Mes tâches</button>
-      <button data-view="projects">▦ Mes projets</button>
-      <button data-view="shortcuts">↗ Raccourcis</button>
-    </nav>
-  </aside>
+<aside>
+  <div class="brand">MySpace <span>●</span></div>
+  <div class="nav-title">Espace personnel</div>
+  <nav class="nav">
+    <button class="active" data-view="dashboard">⌂ Tableau de bord</button>
+    <button data-view="tasks">✓ Tâches</button>
+    <button data-view="calendarView">▦ Calendrier</button>
+    <button data-view="projects">▤ Projets</button>
+    <button data-view="stats">▥ Statistiques</button>
+    <button data-view="shortcuts">↗ Raccourcis</button>
+  </nav>
+</aside>
+<main>
+<header class="topbar">
+  <div>
+    <h1 id="pageTitle">Bonjour ! 👋</h1>
+    <p id="subtitle">Ton espace personnel, organisé à ta façon.</p>
+    <div id="clock" class="small"></div>
+  </div>
+  <div class="actions">
+    <button class="btn" id="themeBtn">☀️ Thème clair</button>
+  </div>
+</header>
 
-  <main>
-    <header class="topbar">
-      <div>
-        <h1 id="pageTitle">Bonjour ! 👋</h1>
-        <p id="subtitle">Bienvenue dans ton espace personnel.</p>
-        <div id="clock"></div>
+<div class="toolbar">
+  <input class="searchbar" id="globalSearch" type="search" placeholder="🔎 Rechercher une tâche ou un projet..." aria-label="Rechercher">
+  <button class="btn" id="clearSearch">Effacer la recherche</button>
+</div>
+
+<section class="view active" id="dashboard">
+  <div class="grid">
+    <article class="card"><span class="stat-icon">✓</span><div class="stat-label">Terminées</div><div class="stat-number" id="doneStat">0</div><div class="small">Tâches accomplies</div></article>
+    <article class="card"><span class="stat-icon">◷</span><div class="stat-label">À faire</div><div class="stat-number" id="todoStat">0</div><div class="small">Tâches restantes</div></article>
+    <article class="card"><span class="stat-icon">▤</span><div class="stat-label">Projets</div><div class="stat-number" id="projectStat">0</div><div class="small">Projets suivis</div></article>
+    <article class="card"><span class="stat-icon">↗</span><div class="stat-label">Réalisation</div><div class="stat-number" id="progressStat">0%</div><div class="small">Taux de tâches terminées</div></article>
+  </div>
+  <div class="content-grid">
+    <article class="card section">
+      <h2>Mes prochaines tâches</h2>
+      <div id="dashboardTasks"></div>
+      <button class="btn" data-go="tasks">Gérer mes tâches →</button>
+    </article>
+    <article class="card section">
+      <h2>Mes projets</h2>
+      <div id="dashboardProjects"></div>
+      <button class="btn" data-go="projects" style="margin-top:12px">Voir les projets →</button>
+    </article>
+  </div>
+  <article class="card section">
+    <h2>Accès rapides</h2>
+    <div class="links">
+      <a class="shortcut" href="https://github.com/" target="_blank" rel="noopener noreferrer">🐙 GitHub<small>Gérer tes dépôts</small></a>
+      <a class="shortcut" href="https://github.com/features/pages" target="_blank" rel="noopener noreferrer">🌐 GitHub Pages<small>Publier tes sites</small></a>
+      <a class="shortcut" href="https://developer.mozilla.org/fr/" target="_blank" rel="noopener noreferrer">📚 MDN Web Docs<small>Documentation web</small></a>
+      <a class="shortcut" href="https://www.w3schools.com/" target="_blank" rel="noopener noreferrer">💻 W3Schools<small>Apprendre à coder</small></a>
+    </div>
+  </article>
+</section>
+
+<section class="view" id="tasks">
+  <article class="card">
+    <h2>Gestion des tâches</h2>
+    <p>Choisis une catégorie, une priorité et une échéance pour chaque tâche.</p>
+    <form class="form-grid" id="taskForm">
+      <input class="field wide" id="taskInput" placeholder="Nouvelle tâche..." maxlength="120" required>
+      <select id="taskCategory" aria-label="Catégorie">
+        <option>Informatique</option><option>Football</option><option>Études</option><option>Personnel</option><option>Autre</option>
+      </select>
+      <select id="taskPriority" aria-label="Priorité">
+        <option value="low">Basse</option><option value="medium" selected>Moyenne</option><option value="high">Haute</option>
+      </select>
+      <input class="field" id="taskDate" type="date" aria-label="Échéance">
+      <button class="btn primary" type="submit">Ajouter</button>
+    </form>
+    <div class="toolbar">
+      <select id="categoryFilter" aria-label="Filtrer par catégorie">
+        <option value="all">Toutes les catégories</option><option>Informatique</option><option>Football</option><option>Études</option><option>Personnel</option><option>Autre</option>
+      </select>
+      <select id="statusFilter" aria-label="Filtrer par statut">
+        <option value="all">Tous les statuts</option><option value="todo">À faire</option><option value="done">Terminées</option>
+      </select>
+      <select id="priorityFilter" aria-label="Filtrer par priorité">
+        <option value="all">Toutes les priorités</option><option value="high">Haute</option><option value="medium">Moyenne</option><option value="low">Basse</option>
+      </select>
+    </div>
+    <ul id="taskList" class="task-list"></ul>
+  </article>
+</section>
+
+<section class="view" id="calendarView">
+  <article class="card section">
+    <div class="calendar-head">
+      <button class="btn" id="prevMonth" aria-label="Mois précédent">←</button>
+      <h2 id="monthTitle" style="margin:0"></h2>
+      <button class="btn" id="nextMonth" aria-label="Mois suivant">→</button>
+    </div>
+    <div id="calendar" class="calendar"></div>
+    <p class="small">Sélectionne un jour pour consulter les tâches prévues. Les dates sont enregistrées avec tes tâches.</p>
+  </article>
+  <article class="card">
+    <h2 id="selectedDateTitle">Tâches du jour</h2>
+    <div id="selectedDayTasks"></div>
+    <button class="btn primary" id="addForDay">+ Ajouter une tâche à cette date</button>
+  </article>
+</section>
+
+<section class="view" id="projects">
+  <article class="card">
+    <h2>Mes projets</h2>
+    <form class="input-row" id="projectForm">
+      <input class="field" id="projectInput" placeholder="Nom du nouveau projet..." maxlength="80" required>
+      <button class="btn primary" type="submit">Créer</button>
+    </form>
+    <div id="allProjects"></div>
+  </article>
+</section>
+
+<section class="view" id="stats">
+  <div class="grid">
+    <article class="card"><div class="stat-label">Total des tâches</div><div class="stat-number" id="totalStats">0</div></article>
+    <article class="card"><div class="stat-label">Taux de réussite</div><div class="stat-number" id="rateStats">0%</div></article>
+    <article class="card"><div class="stat-label">Priorités hautes restantes</div><div class="stat-number" id="highStats">0</div></article>
+    <article class="card"><div class="stat-label">Échéances dépassées</div><div class="stat-number" id="lateStats">0</div></article>
+  </div>
+  <article class="card section">
+    <h2>Répartition par catégorie</h2>
+    <div id="categoryStats"></div>
+  </article>
+  <article class="card">
+    <h2>État des projets</h2>
+    <div id="projectStats"></div>
+  </article>
+</section>
+
+<section class="view" id="shortcuts">
+  <article class="card">
+    <h2>Mes raccourcis personnalisés</h2>
+    <form id="linkForm" class="section">
+      <div class="input-row">
+        <input class="field" id="linkName" placeholder="Nom du site" maxlength="50" required>
+        <input class="field" id="linkUrl" type="url" placeholder="https://exemple.fr" required>
       </div>
-      <div class="actions">
-        <button class="btn" id="themeBtn">☀️ Thème clair</button>
-      </div>
-    </header>
-
-    <section class="view active" id="dashboard">
-      <div class="grid">
-        <article class="card">
-          <span class="stat-icon">✓</span>
-          <div class="stat-label">Tâches terminées</div>
-          <div class="stat-number" id="doneStat">0</div>
-          <div class="small">Toutes tes tâches</div>
-        </article>
-        <article class="card">
-          <span class="stat-icon">◷</span>
-          <div class="stat-label">À faire</div>
-          <div class="stat-number" id="todoStat">0</div>
-          <div class="small">Tâches restantes</div>
-        </article>
-        <article class="card">
-          <span class="stat-icon">▦</span>
-          <div class="stat-label">Projets</div>
-          <div class="stat-number" id="projectStat">0</div>
-          <div class="small">Projets enregistrés</div>
-        </article>
-        <article class="card">
-          <span class="stat-icon">↗</span>
-          <div class="stat-label">Progression</div>
-          <div class="stat-number" id="progressStat">0%</div>
-          <div class="small">Tâches accomplies</div>
-        </article>
-      </div>
-
-      <div class="content-grid">
-        <article class="card section">
-          <h2>Mes tâches récentes</h2>
-          <form class="input-row" id="taskForm">
-            <input id="taskInput" placeholder="Ajouter une tâche..." maxlength="120" required>
-            <button class="btn primary" type="submit">Ajouter</button>
-          </form>
-          <ul class="task-list" id="taskList"></ul>
-        </article>
-
-        <article class="card section">
-          <h2>Mes projets</h2>
-          <div id="projectPreview"></div>
-          <button class="btn" data-go="projects" style="margin-top:15px">Voir tous les projets →</button>
-        </article>
-      </div>
-
-      <article class="card section">
-        <h2>Accès rapides</h2>
-        <div class="links">
-          <a class="shortcut" href="https://github.com/" target="_blank" rel="noopener noreferrer">🐙 GitHub<small>Gérer tes dépôts</small></a>
-          <a class="shortcut" href="https://github.com/features/pages" target="_blank" rel="noopener noreferrer">🌐 GitHub Pages<small>Publier tes sites</small></a>
-          <a class="shortcut" href="https://developer.mozilla.org/fr/" target="_blank" rel="noopener noreferrer">📚 MDN Web Docs<small>Apprendre le développement web</small></a>
-          <a class="shortcut" href="https://www.w3schools.com/" target="_blank" rel="noopener noreferrer">💻 W3Schools<small>Exemples de code</small></a>
-        </div>
-      </article>
-    </section>
-
-    <section class="view" id="tasks">
-      <article class="card">
-        <h2>Gestion des tâches</h2>
-        <p>Ajoute tes tâches et coche celles que tu as terminées.</p>
-        <form class="input-row" id="taskForm2">
-          <input id="taskInput2" placeholder="Nouvelle tâche..." maxlength="120" required>
-          <button class="btn primary" type="submit">Ajouter</button>
-        </form>
-        <ul class="task-list" id="taskList2"></ul>
-      </article>
-    </section>
-
-    <section class="view" id="projects">
-      <article class="card">
-        <h2>Suivi des projets</h2>
-        <p>Des exemples que tu peux modifier ou supprimer.</p>
-        <form class="input-row" id="projectForm">
-          <input id="projectInput" placeholder="Nom du projet..." maxlength="80" required>
-          <button class="btn primary" type="submit">Créer</button>
-        </form>
-        <div id="allProjects"></div>
-      </article>
-    </section>
-
-    <section class="view" id="shortcuts">
-      <article class="card">
-        <h2>Mes raccourcis</h2>
-        <p>Ajoute des liens vers tes sites préférés.</p>
-        <form id="linkForm" class="section">
-          <div class="input-row">
-            <input id="linkName" placeholder="Nom du site" maxlength="50" required>
-            <input id="linkUrl" placeholder="https://exemple.fr" type="url" required>
-          </div>
-          <button class="btn primary" type="submit">Ajouter le raccourci</button>
-        </form>
-        <div class="links" id="customLinks"></div>
-      </article>
-    </section>
-
-    <footer>MySpace Dashboard · Tes données restent dans ce navigateur.</footer>
-  </main>
+      <button class="btn primary" type="submit">Ajouter le raccourci</button>
+    </form>
+    <div id="customLinks" class="links"></div>
+  </article>
+</section>
+<footer>MySpace Dashboard V2 · Application personnelle enregistrée dans ce navigateur.</footer>
+</main>
 </div>
 
 <script>
-const $ = id => document.getElementById(id);
-const read = (key, fallback) => {
-  try {
-    const value = localStorage.getItem(key);
-    return value === null ? fallback : JSON.parse(value);
-  } catch { return fallback; }
+'use strict';
+const $=id=>document.getElementById(id);
+const today=()=>{
+ const d=new Date();
+ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 };
-const save = () => {
-  try {
-    localStorage.setItem('myspace_tasks', JSON.stringify(tasks));
-    localStorage.setItem('myspace_projects', JSON.stringify(projects));
-    localStorage.setItem('myspace_links', JSON.stringify(links));
-    localStorage.setItem('myspace_theme', document.body.classList.contains('light') ? 'light' : 'dark');
-  } catch {
-    alert('La sauvegarde locale est indisponible dans ce navigateur.');
-  }
+const read=(key,fallback)=>{
+ try{
+  const v=localStorage.getItem('myspace2_'+key);
+  return v===null?fallback:JSON.parse(v);
+ }catch{return fallback;}
 };
-
-let tasks = read('myspace_tasks', [
-  {id:1,text:'Découvrir mon tableau de bord',done:false},
-  {id:2,text:'Créer mon premier projet',done:false},
-  {id:3,text:'Personnaliser mon espace',done:true}
+let tasks=read('tasks',[
+ {id:1,text:'Découvrir le tableau de bord',category:'Informatique',priority:'medium',date:today(),done:false},
+ {id:2,text:'Préparer mon prochain projet',category:'Études',priority:'high',date:today(),done:false},
+ {id:3,text:'Personnaliser mon espace',category:'Personnel',priority:'low',date:'',done:true}
 ]);
-let projects = read('myspace_projects', [
-  {id:1,name:'Mon site GitHub Pages',progress:35},
-  {id:2,name:'Projet informatique',progress:60},
-  {id:3,name:'Objectifs personnels',progress:20}
+let projects=read('projects',[
+ {id:1,name:'Mon site GitHub Pages',progress:35},
+ {id:2,name:'Projet informatique',progress:60},
+ {id:3,name:'Objectifs personnels',progress:20}
 ]);
-let links = read('myspace_links', []);
-let nextTaskId = Math.max(0,...tasks.map(t=>Number(t.id)||0))+1;
-let nextProjectId = Math.max(0,...projects.map(p=>Number(p.id)||0))+1;
-let nextLinkId = Math.max(0,...links.map(l=>Number(l.id)||0))+1;
+let links=read('links',[]);
+let nextTask=Math.max(0,...tasks.map(x=>Number(x.id)||0))+1;
+let nextProject=Math.max(0,...projects.map(x=>Number(x.id)||0))+1;
+let nextLink=Math.max(0,...links.map(x=>Number(x.id)||0))+1;
+let query='';
+let month=new Date();month.setDate(1);
+let selectedDate=today();
+if(read('theme','dark')==='light')document.body.classList.add('light');
 
-if (read('myspace_theme','dark') === 'light') document.body.classList.add('light');
-
-const titles = {
-  dashboard:['Bonjour ! 👋','Bienvenue dans ton espace personnel.'],
-  tasks:['Mes tâches ✓','Organise ton travail à ton rythme.'],
-  projects:['Mes projets ▦','Suis tes idées et tes réalisations.'],
-  shortcuts:['Mes raccourcis ↗','Tous tes sites utiles au même endroit.']
-};
-
-function showView(view) {
-  if (!titles[view]) return;
-  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===view));
-  document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
-  $('pageTitle').textContent=titles[view][0];
-  $('subtitle').textContent=titles[view][1];
+function save(){
+ try{
+  localStorage.setItem('myspace2_tasks',JSON.stringify(tasks));
+  localStorage.setItem('myspace2_projects',JSON.stringify(projects));
+  localStorage.setItem('myspace2_links',JSON.stringify(links));
+  localStorage.setItem('myspace2_theme',document.body.classList.contains('light')?'light':'dark');
+ }catch{alert('Impossible de sauvegarder dans ce navigateur.');}
+}
+function el(tag,text='',cls=''){
+ const n=document.createElement(tag);n.textContent=text;if(cls)n.className=cls;return n;
+}
+function showView(id){
+ document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
+ document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===id));
+ const names={
+ dashboard:['Bonjour ! 👋','Ton espace personnel, organisé à ta façon.'],
+ tasks:['Mes tâches ✓','Organise ton travail par catégorie et priorité.'],
+ calendarView:['Mon calendrier ▦','Consulte tes tâches par date.'],
+ projects:['Mes projets ▤','Suis la progression de tes réalisations.'],
+ stats:['Mes statistiques ▥','Observe tes progrès et tes priorités.'],
+ shortcuts:['Mes raccourcis ↗','Tes sites utiles au même endroit.']
+ };
+ $('pageTitle').textContent=names[id][0];$('subtitle').textContent=names[id][1];
+ if(id==='calendarView')renderCalendar();
+ if(id==='stats')renderStats();
 }
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
 document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.go)));
 
-function element(tag, text, className) {
-  const el=document.createElement(tag);
-  el.textContent=text;
-  if(className) el.className=className;
-  return el;
+function priorityName(p){return {high:'Haute',medium:'Moyenne',low:'Basse'}[p]||'Moyenne';}
+function dateName(d){
+ if(!d)return 'Sans échéance';
+ const parts=d.split('-').map(Number);
+ if(parts.length!==3||parts.some(Number.isNaN))return 'Date inconnue';
+ return new Date(parts[0],parts[1]-1,parts[2]).toLocaleDateString('fr-FR');
 }
-function renderTasks(targetId) {
-  const list=$(targetId);
-  list.replaceChildren();
-  if (!tasks.length) {
-    list.append(element('li','Aucune tâche pour le moment.','empty'));
-    return;
-  }
-  tasks.forEach(task=>{
-    const li=element('li','','task'+(task.done?' done':''));
-    const check=document.createElement('input');
-    check.type='checkbox';
-    check.checked=task.done;
-    check.setAttribute('aria-label','Marquer comme terminée');
-    check.addEventListener('change',()=>{
-      task.done=check.checked;save();render();
-    });
-    const label=element('span',task.text);
-    const del=element('button','×','delete');
-    del.type='button';del.setAttribute('aria-label','Supprimer la tâche');
-    del.addEventListener('click',()=>{
-      tasks=tasks.filter(t=>t.id!==task.id);save();render();
-    });
-    li.append(check,label,del);
-    list.append(li);
-  });
+function matches(t){
+ const q=query.toLocaleLowerCase('fr');
+ const searchMatch=!q||[t.text,t.category,priorityName(t.priority)].some(v=>String(v||'').toLocaleLowerCase('fr').includes(q));
+ const category=$('categoryFilter').value;
+ const status=$('statusFilter').value;
+ const priority=$('priorityFilter').value;
+ return searchMatch&&(category==='all'||t.category===category)&&(status==='all'||(status==='done')===t.done)&&(priority==='all'||t.priority===priority);
 }
-function addTask(text) {
-  tasks.push({id:nextTaskId++,text,done:false});
-  save();render();
+function taskNode(t){
+ const li=el('li','','task'+(t.done?' done':''));
+ const check=document.createElement('input');check.type='checkbox';check.checked=t.done;check.setAttribute('aria-label','Marquer comme terminée');
+ check.addEventListener('change',()=>{t.done=check.checked;save();renderAll();});
+ const body=el('div','','task-body');
+ body.append(el('span',t.text,'task-title'));
+ const meta=el('div','','task-meta');
+ meta.append(el('span',t.category,'tag'),el('span',priorityName(t.priority),'tag '+t.priority),el('span',dateName(t.date),'tag'));
+ body.append(meta);
+ const del=el('button','×','delete');del.type='button';del.title='Supprimer cette tâche';
+ del.addEventListener('click',()=>{tasks=tasks.filter(x=>x.id!==t.id);save();renderAll();});
+ li.append(check,body,del);return li;
+}
+function renderTaskList(){
+ const list=$('taskList');list.replaceChildren();
+ const found=tasks.filter(matches).sort((a,b)=>{
+  if(a.done!==b.done)return Number(a.done)-Number(b.done);
+  if(!a.date)return 1;if(!b.date)return -1;return a.date.localeCompare(b.date);
+ });
+ if(!found.length){list.append(el('li',query?'Aucun résultat pour cette recherche.':'Aucune tâche dans cette sélection.','empty'));return;}
+ found.forEach(t=>list.append(taskNode(t)));
+ const dash=$('dashboardTasks');dash.replaceChildren();
+ let upcoming=tasks.filter(t=>!t.done&&(!t.date||t.date>=today())&&(!query||t.text.toLocaleLowerCase('fr').includes(query.toLocaleLowerCase('fr'))));
+ upcoming.sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999'));
+ if(!upcoming.length)dash.append(el('p','Aucune tâche à venir.','empty'));
+ else upcoming.slice(0,5).forEach(t=>dash.append(taskNode(t)));
 }
 $('taskForm').addEventListener('submit',e=>{
-  e.preventDefault();addTask($('taskInput').value.trim());$('taskInput').value='';
+ e.preventDefault();const text=$('taskInput').value.trim();if(!text)return;
+ tasks.push({id:nextTask++,text,category:$('taskCategory').value,priority:$('taskPriority').value,date:$('taskDate').value,done:false});
+ $('taskInput').value='';$('taskDate').value='';save();renderAll();
 });
-$('taskForm2').addEventListener('submit',e=>{
-  e.preventDefault();addTask($('taskInput2').value.trim());$('taskInput2').value='';
+['categoryFilter','statusFilter','priorityFilter'].forEach(id=>$(id).addEventListener('change',renderTaskList));
+$('globalSearch').addEventListener('input',e=>{
+ query=e.target.value.trim();
+ if(query){showView('tasks');}
+ renderTaskList();
+});
+$('clearSearch').addEventListener('click',()=>{
+ query='';$('globalSearch').value='';renderTaskList();
 });
 
-function renderProjects(targetId) {
-  const container=$(targetId);
-  container.replaceChildren();
-  if (!projects.length) {
-    container.append(element('p','Aucun projet. Ajoute ta première idée !','empty'));
-    return;
-  }
-  projects.forEach(project=>{
-    const item=element('div','','project');
-    const top=element('div','','project-top');
-    top.append(element('strong',project.name),element('span',project.progress+'%'));
-    const bar=element('div','','progress');
-    const fill=document.createElement('div');
-    fill.style.width=project.progress+'%';
-    bar.append(fill);
-    const controls=element('div','','actions');
-    controls.style.marginTop='10px';
-    const range=document.createElement('input');
-    range.type='range';range.min='0';range.max='100';range.value=project.progress;
-    range.setAttribute('aria-label','Progression du projet '+project.name);
-    range.addEventListener('input',()=>{
-      project.progress=Number(range.value);
-      top.lastChild.textContent=project.progress+'%';
-      fill.style.width=project.progress+'%';
-      if(targetId==='allProjects') $('projectPreview').replaceChildren();
-      updateStats();
-      save();
-    });
-    const del=element('button','Supprimer','btn');
-    del.type='button';
-    del.addEventListener('click',()=>{
-      projects=projects.filter(p=>p.id!==project.id);save();render();
-    });
-    controls.append(range,del);
-    item.append(top,bar,controls);
-    container.append(item);
+function renderProjects(targetId){
+ const box=$(targetId);box.replaceChildren();
+ if(!projects.length){box.append(el('p','Aucun projet pour le moment.','empty'));return;}
+ projects.forEach(p=>{
+  const item=el('div','','project');
+  const top=el('div','','project-top');
+  top.append(el('strong',p.name),el('span',p.progress+'%'));
+  const bar=el('div','','progress'),fill=el('div');
+  fill.style.width=p.progress+'%';bar.append(fill);
+  const controls=el('div','','project-controls');
+  const range=document.createElement('input');range.type='range';range.min='0';range.max='100';range.value=p.progress;
+  range.setAttribute('aria-label','Progression de '+p.name);
+  range.addEventListener('input',()=>{
+   p.progress=Number(range.value);top.lastChild.textContent=p.progress+'%';fill.style.width=p.progress+'%';
+   save();updateStats();
+   if($('stats').classList.contains('active'))renderStats();
   });
+  const del=el('button','Supprimer','btn danger');del.type='button';
+  del.addEventListener('click',()=>{projects=projects.filter(x=>x.id!==p.id);save();renderAll();});
+  controls.append(range,del);item.append(top,bar,controls);box.append(item);
+ });
 }
 $('projectForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  const name=$('projectInput').value.trim();
-  if(!name)return;
-  projects.push({id:nextProjectId++,name,progress:0});
-  $('projectInput').value='';save();render();
+ e.preventDefault();const name=$('projectInput').value.trim();if(!name)return;
+ projects.push({id:nextProject++,name,progress:0});$('projectInput').value='';save();renderAll();
 });
-
-function renderLinks() {
-  const container=$('customLinks');
-  container.replaceChildren();
-  if(!links.length) {
-    container.append(element('p','Aucun raccourci personnalisé.','empty'));
-    return;
-  }
-  links.forEach(link=>{
-    const card=element('div');
-    const a=element('a',link.name,'shortcut');
-    a.href=link.url;a.target='_blank';a.rel='noopener noreferrer';
-    const del=element('button','Supprimer','btn');
-    del.type='button';del.style.marginTop='8px';
-    del.addEventListener('click',()=>{
-      links=links.filter(l=>l.id!==link.id);save();renderLinks();
-    });
-    card.append(a,del);container.append(card);
-  });
+function renderLinks(){
+ const box=$('customLinks');box.replaceChildren();
+ if(!links.length){box.append(el('p','Aucun raccourci personnalisé.','empty'));return;}
+ links.forEach(l=>{
+  const wrap=el('div');const a=el('a',l.name,'shortcut');a.href=l.url;a.target='_blank';a.rel='noopener noreferrer';
+  const del=el('button','Supprimer','btn danger');del.type='button';del.style.marginTop='8px';
+  del.addEventListener('click',()=>{links=links.filter(x=>x.id!==l.id);save();renderLinks();});
+  wrap.append(a,del);box.append(wrap);
+ });
 }
 $('linkForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  const name=$('linkName').value.trim();
-  const url=$('linkUrl').value.trim();
-  try {
-    const parsed=new URL(url);
-    if(!['http:','https:'].includes(parsed.protocol)) throw new Error();
-    links.push({id:nextLinkId++,name,url:parsed.href});
-    save();renderLinks();$('linkForm').reset();
-  } catch {
-    alert('Entre une adresse web valide commençant par https:// ou http://.');
-  }
+ e.preventDefault();const name=$('linkName').value.trim(),url=$('linkUrl').value.trim();
+ try{
+  const parsed=new URL(url);if(!['http:','https:'].includes(parsed.protocol))throw Error();
+  links.push({id:nextLink++,name,url:parsed.href});save();renderLinks();$('linkForm').reset();
+ }catch{alert('Utilise une adresse web valide commençant par http:// ou https://.');}
 });
 
-function updateStats() {
-  const done=tasks.filter(t=>t.done).length;
-  $('doneStat').textContent=done;
-  $('todoStat').textContent=tasks.length-done;
-  $('projectStat').textContent=projects.length;
-  $('progressStat').textContent=(tasks.length?Math.round(done/tasks.length*100):0)+'%';
+function updateStats(){
+ const done=tasks.filter(t=>t.done).length;
+ const todo=tasks.length-done;
+ $('doneStat').textContent=done;$('todoStat').textContent=todo;
+ $('projectStat').textContent=projects.length;
+ $('progressStat').textContent=(tasks.length?Math.round(done/tasks.length*100):0)+'%';
 }
-function render() {
-  renderTasks('taskList');
-  renderTasks('taskList2');
-  renderProjects('projectPreview');
-  renderProjects('allProjects');
-  renderLinks();
-  updateStats();
+function renderStats(){
+ const done=tasks.filter(t=>t.done).length;
+ const late=tasks.filter(t=>!t.done&&t.date&&t.date<today()).length;
+ $('totalStats').textContent=tasks.length;
+ $('rateStats').textContent=(tasks.length?Math.round(done/tasks.length*100):0)+'%';
+ $('highStats').textContent=tasks.filter(t=>!t.done&&t.priority==='high').length;
+ $('lateStats').textContent=late;
+ const categories=['Informatique','Football','Études','Personnel','Autre'];
+ const box=$('categoryStats');box.replaceChildren();
+ categories.forEach(c=>{
+  const count=tasks.filter(t=>t.category===c).length;
+  const row=el('div','','bar-row');
+  row.append(el('span',c));const track=el('div','','bar-track'),fill=el('div','','bar-fill');
+  fill.style.width=(tasks.length?count/tasks.length*100:0)+'%';track.append(fill);
+  row.append(track,el('span',String(count)));box.append(row);
+ });
+ const pbox=$('projectStats');pbox.replaceChildren();
+ if(!projects.length)pbox.append(el('p','Aucun projet.','empty'));
+ projects.forEach(p=>{
+  const row=el('div','','bar-row');row.append(el('span',p.name));
+  const track=el('div','','bar-track'),fill=el('div','','bar-fill');
+  fill.style.width=p.progress+'%';track.append(fill);row.append(track,el('span',p.progress+'%'));pbox.append(row);
+ });
 }
+const monthNames=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+function renderCalendar(){
+ $('monthTitle').textContent=monthNames[month.getMonth()]+' '+month.getFullYear();
+ const box=$('calendar');box.replaceChildren();
+ ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(d=>box.append(el('div',d,'weekday')));
+ const offset=(new Date(month.getFullYear(),month.getMonth(),1).getDay()+6)%7;
+ const days=new Date(month.getFullYear(),month.getMonth()+1,0).getDate();
+ const total=Math.ceil((offset+days)/7)*7;
+ for(let i=0;i<total;i++){
+  const dayNum=i-offset+1;
+  const inMonth=dayNum>=1&&dayNum<=days;
+  const d=new Date(month.getFullYear(),month.getMonth(),dayNum);
+  const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  const count=tasks.filter(t=>t.date===key&&!t.done).length;
+  const b=el('button',String(d.getDate()),'day'+(!inMonth?' muted-day':'')+(key===today()?' today':'')+(key===selectedDate?' selected':''));
+  b.type='button';b.setAttribute('aria-label',dateName(key)+(count?', '+count+' tâche(s)':''));
+  if(count)b.append(el('span',count+' tâche'+(count>1?'s':''),'day-count'));
+  b.addEventListener('click',()=>{selectedDate=key;renderCalendar();renderSelectedDay();});
+  box.append(b);
+ }
+ renderSelectedDay();
+}
+function renderSelectedDay(){
+ $('selectedDateTitle').textContent='Tâches du '+dateName(selectedDate);
+ const box=$('selectedDayTasks');box.replaceChildren();
+ const found=tasks.filter(t=>t.date===selectedDate);
+ if(!found.length)box.append(el('p','Aucune tâche prévue ce jour-là.','empty'));
+ found.forEach(t=>box.append(taskNode(t)));
+}
+$('prevMonth').addEventListener('click',()=>{month.setMonth(month.getMonth()-1);renderCalendar();});
+$('nextMonth').addEventListener('click',()=>{month.setMonth(month.getMonth()+1);renderCalendar();});
+$('addForDay').addEventListener('click',()=>{
+ showView('tasks');$('taskDate').value=selectedDate;$('taskInput').focus();
+});
+
 $('themeBtn').addEventListener('click',()=>{
-  document.body.classList.toggle('light');
-  $('themeBtn').textContent=document.body.classList.contains('light')?'🌙 Thème sombre':'☀️ Thème clair';
-  save();
+ document.body.classList.toggle('light');
+ $('themeBtn').textContent=document.body.classList.contains('light')?'🌙 Thème sombre':'☀️ Thème clair';
+ save();
 });
-$('themeBtn').textContent=document.body.classList.contains('light')?'🌙 Thème sombre':'☀️ Thème clair';
-
-function updateClock() {
-  $('clock').textContent=new Date().toLocaleString('fr-FR',{
-    weekday:'long',day:'numeric',month:'long',year:'numeric',
-    hour:'2-digit',minute:'2-digit',second:'2-digit'
-  });
+function renderAll(){
+ renderTaskList();renderProjects('dashboardProjects');renderProjects('allProjects');
+ renderLinks();updateStats();
+ if($('calendarView').classList.contains('active'))renderCalendar();
+ if($('stats').classList.contains('active'))renderStats();
 }
-render();
-updateClock();
-setInterval(updateClock,1000);
+function updateClock(){
+ $('clock').textContent=new Date().toLocaleString('fr-FR',{
+ weekday:'long',day:'numeric',month:'long',year:'numeric',
+ hour:'2-digit',minute:'2-digit',second:'2-digit'
+ });
+}
+$('themeBtn').textContent=document.body.classList.contains('light')?'🌙 Thème sombre':'☀️ Thème clair';
+renderAll();updateClock();setInterval(updateClock,1000);
 </script>
 </body>
 </html>
