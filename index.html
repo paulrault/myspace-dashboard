@@ -3,762 +3,570 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MySpace Dashboard V3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MySpace Dashboard V4</title>
 <style>
 :root{
-  --bg:#0b1120;--panel:#131d30;--panel2:#19263c;--text:#edf4ff;
-  --muted:#91a2bd;--accent:#61a8ff;--accent2:#8bd5ff;
-  --border:#263650;--green:#44d7a0;--red:#ff7185;--orange:#ffbd69;
-  --shadow:0 12px 32px #0002;
+ --bg:#0b1220;--panel:#131e30;--panel2:#1a2940;--text:#edf4ff;
+ --muted:#93a5c0;--border:#293951;--accent:#61a8ff;--accent2:#8bd5ff;
+ --green:#43d7a1;--red:#ff7285;--orange:#ffbf69;--shadow:0 12px 30px #0002;
 }
-body.light{
-  --bg:#eef3fa;--panel:#fff;--panel2:#f1f5fb;--text:#17243a;
-  --muted:#64748b;--accent:#2676e8;--accent2:#1557bd;
-  --border:#dce5f1;--green:#0d9d6d;--red:#dc415c;--orange:#b96a00;
-  --shadow:0 8px 25px #1b355510;
-}
+body.light{--bg:#edf3fb;--panel:#fff;--panel2:#f1f5fb;--text:#18263c;--muted:#65758d;--border:#dbe4f0;--accent:#2878e8;--accent2:#1557bd;--green:#098e65;--red:#d83e58;--orange:#a96300;--shadow:0 8px 24px #24406010}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;transition:.2s}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;transition:background .2s,color .2s}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .app{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:100vh}
-.sidebar{background:var(--panel);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;gap:25px}
-.brand{display:flex;align-items:center;gap:12px;padding:0 8px}
-.brand-icon{width:43px;height:43px;border-radius:14px;background:linear-gradient(135deg,#398bff,#8bd5ff);display:grid;place-items:center;color:#08162c;font-size:23px;font-weight:900}
-.brand h1{font-size:19px;margin:0}
-.brand p{margin:4px 0 0;color:var(--muted);font-size:12px}
+.sidebar{background:var(--panel);border-right:1px solid var(--border);padding:23px 15px;display:flex;flex-direction:column;gap:25px}
+.brand{display:flex;align-items:center;gap:12px;padding:0 7px}
+.logo{width:43px;height:43px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#07172b;font-size:23px;font-weight:900}
+.brand h1{font-size:19px;margin:0}.brand p{font-size:12px;color:var(--muted);margin:4px 0 0}
 .nav-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);padding:0 12px;margin-bottom:8px}
 .nav{display:grid;gap:5px}
-.nav button{background:transparent;color:var(--muted);border:0;border-radius:10px;text-align:left;padding:12px;display:flex;gap:12px;align-items:center}
+.nav button{border:0;border-radius:10px;background:transparent;color:var(--muted);padding:12px;text-align:left;display:flex;gap:11px;align-items:center}
 .nav button:hover,.nav button.active{background:var(--panel2);color:var(--text)}
 .nav button.active{box-shadow:inset 3px 0 var(--accent)}
 .nav .emoji{width:21px;text-align:center}
-.sidebar-bottom{margin-top:auto;border:1px solid var(--border);border-radius:14px;padding:15px}
-.sidebar-bottom p{color:var(--muted);font-size:12px;line-height:1.6}
-.main{padding:27px;min-width:0;max-width:1600px;width:100%;margin:0 auto}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:27px;flex-wrap:wrap}
-.eyebrow{font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;font-weight:bold}
-h2{margin:7px 0;font-size:27px}
-.subtitle{color:var(--muted);font-size:14px;margin:0;line-height:1.5}
-.top-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
-.search{width:min(280px,100%);background:var(--panel);border:1px solid var(--border);border-radius:11px;padding:11px 13px;color:var(--text)}
-.btn{border:1px solid var(--border);background:var(--panel2);color:var(--text);padding:10px 13px;border-radius:10px;font-weight:600}
-.btn:hover{filter:brightness(1.08)}
-.btn.primary{background:var(--accent);color:#071629;border-color:var(--accent)}
-.btn.danger{color:var(--red)}
-.btn.small{font-size:12px;padding:7px 9px}
-.grid{display:grid;gap:16px}
-.stats-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:20px}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:19px;min-width:0;box-shadow:var(--shadow)}
-.stat-head{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px;gap:8px}
-.stat-icon{font-size:21px}
-.stat-number{font-size:29px;font-weight:800;margin:15px 0 7px}
-.stat-foot{color:var(--muted);font-size:12px}
-.columns{grid-template-columns:minmax(0,1.35fr) minmax(280px,1fr)}
-.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-.section-head h3{font-size:17px;margin:0}
-.muted{color:var(--muted)}
-.small-text{font-size:12px}
+.sidebox{margin-top:auto;padding:15px;border:1px solid var(--border);border-radius:13px}
+.sidebox p{font-size:12px;line-height:1.6;color:var(--muted)}
+.main{width:100%;max-width:1650px;min-width:0;margin:auto;padding:26px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:25px}
+.eyebrow{font-size:11px;color:var(--accent);letter-spacing:1.6px;font-weight:bold}
+h2{font-size:27px;margin:7px 0}.subtitle{font-size:13px;line-height:1.6;color:var(--muted);margin:0}
+.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.search{width:min(300px,100%);padding:11px 13px;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:10px}
+.btn{border:1px solid var(--border);background:var(--panel2);color:var(--text);border-radius:9px;padding:10px 13px;font-weight:600}
+.btn:hover{filter:brightness(1.1)}.btn.primary{background:var(--accent);color:#071629;border-color:var(--accent)}
+.btn.danger{color:var(--red)}.btn.small{padding:7px 9px;font-size:12px}.btn:disabled{opacity:.4;cursor:not-allowed}
+.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:17px}
+.columns{grid-template-columns:minmax(0,1.2fr) minmax(280px,1fr)}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.card h3{font-size:16px;margin:0}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:15px}
+.stat-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--muted);font-size:12px}
+.stat-icon{font-size:21px}.stat-num{font-size:29px;font-weight:800;margin:15px 0 7px}.stat-foot{font-size:11px;color:var(--muted)}
+.view.hidden{display:none!important}
 .task-list{display:grid;gap:10px}
-.task{display:flex;align-items:flex-start;gap:11px;border:1px solid var(--border);border-radius:12px;padding:13px;min-width:0}
-.task.done{opacity:.65}
-.task.done .task-title{text-decoration:line-through}
-.check{width:19px;height:19px;accent-color:var(--accent);margin-top:2px;flex-shrink:0}
-.task-main{flex:1;min-width:0}
-.task-title{font-size:14px;font-weight:700;overflow-wrap:anywhere}
-.task-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px;align-items:center}
-.badge{display:inline-block;padding:4px 7px;border-radius:6px;background:var(--panel2);font-size:11px;color:var(--muted)}
-.badge.high{color:var(--red)}.badge.medium{color:var(--orange)}.badge.low{color:var(--green)}
-.badge.overdue{color:var(--red);border:1px solid var(--red)}
-.badge.soon{color:var(--orange);border:1px solid var(--orange)}
+.task{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--border);border-radius:11px;padding:12px;min-width:0}
+.task.done{opacity:.62}.task.done .task-title{text-decoration:line-through}
+.check{width:18px;height:18px;margin-top:2px;accent-color:var(--accent);flex-shrink:0}
+.task-main{flex:1;min-width:0}.task-title{font-size:13px;font-weight:700;overflow-wrap:anywhere}
+.task-desc{font-size:12px;color:var(--muted);margin-top:5px;overflow-wrap:anywhere;white-space:pre-wrap}
+.task-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
+.badge{display:inline-block;border-radius:6px;background:var(--panel2);padding:4px 7px;color:var(--muted);font-size:10px}
+.badge.high,.badge.overdue{color:var(--red)}.badge.medium,.badge.soon{color:var(--orange)}.badge.low{color:var(--green)}
+.badge.overdue,.badge.soon{border:1px solid currentColor}
 .task-actions{display:flex;gap:5px;flex-wrap:wrap}
-.progress{height:7px;border-radius:99px;background:var(--panel2);overflow:hidden;margin:11px 0}
-.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width .2s}
-.project{border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:11px}
+.progress{height:7px;background:var(--panel2);border-radius:50px;overflow:hidden;margin:11px 0}
+.progress span{display:block;height:100%;border-radius:50px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.project{border:1px solid var(--border);border-radius:11px;padding:14px;margin-bottom:10px}
 .project:last-child{margin-bottom:0}
-.project-title{font-weight:700;overflow-wrap:anywhere}
-.project-line{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.project-line .muted{font-size:12px}
-.project-actions{display:flex;gap:5px}
-.empty{padding:28px 12px;text-align:center;color:var(--muted);font-size:14px;line-height:1.7}
-.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
-.field{display:grid;gap:7px}
-.field.full{grid-column:1/-1}
-.field label{font-size:12px;color:var(--muted);font-weight:bold}
-.field input,.field select,.field textarea{width:100%;padding:11px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--text)}
-.field textarea{min-height:80px;resize:vertical}
-.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}
+.project-line{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.project-title{font-size:14px;font-weight:bold;overflow-wrap:anywhere}
+.project-actions{display:flex;gap:5px;flex-wrap:wrap}
+.muted{color:var(--muted)}.small-text{font-size:11px}
+.empty{text-align:center;padding:25px 12px;color:var(--muted);font-size:13px;line-height:1.7}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
 .filters select,.filters input{background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:10px;max-width:100%}
-.calendar-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}
-.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
-.weekday{text-align:center;color:var(--muted);font-size:12px;padding:8px 0}
-.day{min-height:86px;padding:8px;border:1px solid var(--border);background:var(--panel);border-radius:10px;color:var(--text);text-align:left}
+.calendar-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.weekday{text-align:center;color:var(--muted);font-size:11px;padding:7px 0}
+.day{min-height:83px;padding:7px;border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:9px;text-align:left;overflow:hidden}
 .day:hover,.day.selected{border-color:var(--accent);background:var(--panel2)}
 .day.today .day-number{color:var(--accent);font-weight:900}
-.day-number{font-size:13px}
-.day-dots{display:flex;gap:4px;flex-wrap:wrap;margin-top:9px}
-.day-dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.day-dots{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.day-dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
 .day-dot.done{background:var(--green)}
-.bar-row{display:grid;grid-template-columns:110px minmax(0,1fr) 35px;gap:12px;align-items:center;margin:17px 0;font-size:13px}
-.bar{height:9px;border-radius:99px;background:var(--panel2);overflow:hidden}
-.bar span{display:block;height:100%;background:var(--accent);border-radius:99px}
-.alert{padding:12px 14px;border:1px solid var(--border);border-radius:11px;margin-bottom:9px;font-size:13px;line-height:1.5}
+.bar-row{display:grid;grid-template-columns:105px minmax(0,1fr) 28px;gap:10px;align-items:center;margin:17px 0;font-size:12px}
+.bar{height:8px;background:var(--panel2);border-radius:30px;overflow:hidden}.bar span{display:block;height:100%;background:var(--accent);border-radius:30px}
+.alert{padding:12px 14px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;font-size:12px;line-height:1.5}
 .alert.red{border-color:var(--red)}.alert.orange{border-color:var(--orange)}
-.modal-backdrop{position:fixed;inset:0;background:#020713bb;z-index:20;display:none;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.field{display:grid;gap:7px}.field.full{grid-column:1/-1}
+.field label{font-size:12px;color:var(--muted);font-weight:bold}
+.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid var(--border);border-radius:9px;background:var(--bg);color:var(--text)}
+.field textarea{min-height:75px;resize:vertical}
+.modal-backdrop{position:fixed;inset:0;z-index:20;background:#020713bb;display:none;align-items:center;justify-content:center;padding:15px;overflow:auto}
 .modal-backdrop.open{display:flex}
-.modal{width:min(580px,100%);max-height:92vh;overflow:auto;background:var(--panel);border:1px solid var(--border);border-radius:17px;padding:22px;box-shadow:0 20px 70px #0006}
-.modal-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:20px}
-.modal-head h3{margin:0;font-size:20px}
-.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px;flex-wrap:wrap}
-.toast{position:fixed;bottom:20px;right:20px;background:var(--panel);border:1px solid var(--accent);padding:14px 18px;border-radius:12px;box-shadow:var(--shadow);z-index:50;max-width:min(400px,90vw);display:none}
+.modal{width:min(600px,100%);max-height:92vh;overflow:auto;background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:21px;box-shadow:0 20px 70px #0006}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px}.modal-head h3{margin:0}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;flex-wrap:wrap}
+.toast{position:fixed;right:20px;bottom:20px;z-index:50;display:none;background:var(--panel);border:1px solid var(--accent);border-radius:11px;padding:14px 17px;box-shadow:var(--shadow);max-width:90vw;font-size:13px}
 .toast.show{display:block}
-.footer{text-align:center;color:var(--muted);font-size:12px;padding:26px 0 5px}
-.hidden{display:none!important}
-@media(max-width:1050px){.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.columns{grid-template-columns:1fr}}
-@media(max-width:720px){
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:0}
+.color-options{display:flex;gap:9px;flex-wrap:wrap}
+.color-choice{width:29px;height:29px;border-radius:50%;border:3px solid var(--panel);outline:1px solid var(--border)}
+.color-choice.selected{outline:2px solid var(--text)}
+.footer{text-align:center;padding:24px 0 5px;color:var(--muted);font-size:11px}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.columns{grid-template-columns:1fr}}
+@media(max-width:700px){
  .app{grid-template-columns:1fr}.sidebar{padding:12px;border-right:0;border-bottom:1px solid var(--border);gap:12px}
- .brand{padding:5px}.nav-label,.sidebar-bottom{display:none}.nav{grid-template-columns:repeat(3,minmax(0,1fr))}
- .nav button{justify-content:center;font-size:12px;padding:10px 4px;gap:5px;flex-direction:column}
- .main{padding:17px}.topbar{align-items:flex-start}.top-actions{width:100%}.search{flex:1;width:auto}
- .stats-grid{gap:10px}.card{padding:14px}.stat-number{font-size:24px}
- .day{min-height:57px;padding:5px}.day-dots{margin-top:5px}.day-dot{width:5px;height:5px}
- .form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.bar-row{grid-template-columns:82px minmax(0,1fr) 28px;gap:7px}
+ .brand{padding:4px}.sidebox,.nav-label{display:none}
+ .nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+ .nav button{justify-content:center;flex-direction:column;gap:5px;padding:9px 3px;font-size:11px;text-align:center}
+ .main{padding:15px}.top-actions{width:100%}.search{width:auto;flex:1}
+ .card{padding:13px}.stat-num{font-size:24px}.day{min-height:58px;padding:5px}.day-dots{margin-top:5px}
+ .form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}
+ .bar-row{grid-template-columns:82px minmax(0,1fr) 24px;gap:7px}
 }
 </style>
 </head>
 <body>
 <div class="app">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-icon">M</div>
-      <div><h1>MySpace</h1><p>Dashboard personnel V3</p></div>
+<aside class="sidebar">
+  <div class="brand"><div class="logo">M</div><div><h1>MySpace</h1><p>Dashboard V4</p></div></div>
+  <div>
+    <div class="nav-label">Espace de travail</div>
+    <nav class="nav" id="navigation">
+      <button class="active" data-view="dashboard"><span class="emoji">▦</span>Tableau de bord</button>
+      <button data-view="tasks"><span class="emoji">☑</span>Mes tâches</button>
+      <button data-view="calendar"><span class="emoji">▦</span>Calendrier</button>
+      <button data-view="projects"><span class="emoji">◈</span>Projets</button>
+      <button data-view="stats"><span class="emoji">▤</span>Statistiques</button>
+      <button data-view="settings"><span class="emoji">⚙</span>Paramètres</button>
+    </nav>
+  </div>
+  <div class="sidebox">
+    <strong>Ton espace personnel</strong>
+    <p>Centralise tes tâches, tes études, tes projets informatiques et tes activités sportives.</p>
+    <button class="btn primary" style="width:100%" onclick="openTaskModal()">＋ Nouvelle tâche</button>
+  </div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div><div class="eyebrow" id="pageEyebrow">TON ESPACE</div><h2 id="pageTitle">Bonjour !</h2><p class="subtitle" id="pageSubtitle">Retrouve l'essentiel de ton activité.</p></div>
+  <div class="top-actions">
+    <input id="globalSearch" class="search" type="search" placeholder="Rechercher…" aria-label="Rechercher">
+    <button class="btn" id="themeButton" onclick="toggleTheme()">🌙 Mode sombre</button>
+    <button class="btn primary" onclick="openTaskModal()">＋ Ajouter</button>
+  </div>
+</header>
+
+<section id="view-dashboard" class="view">
+  <div class="grid stats" id="dashboardStats"></div>
+  <div id="dashboardAlerts"></div>
+  <div class="grid columns">
+    <div class="card"><div class="section-head"><h3>📋 Tâches à suivre</h3><button class="btn small" onclick="showView('tasks')">Tout voir →</button></div><div id="dashboardTasks" class="task-list"></div></div>
+    <div class="card"><div class="section-head"><h3>🚀 Mes projets</h3><button class="btn small" onclick="showView('projects')">Tout voir →</button></div><div id="dashboardProjects"></div></div>
+  </div>
+</section>
+
+<section id="view-tasks" class="view hidden">
+  <div class="card">
+    <div class="section-head"><h3>📋 Toutes mes tâches</h3><button class="btn primary" onclick="openTaskModal()">＋ Nouvelle tâche</button></div>
+    <div class="filters">
+      <select id="filterCategory" onchange="renderTasks()"><option value="">Toutes les catégories</option><option>Informatique</option><option>Football</option><option>Études</option><option>Personnel</option><option>Autre</option></select>
+      <select id="filterStatus" onchange="renderTasks()"><option value="">Tous les états</option><option value="todo">À faire</option><option value="done">Terminées</option></select>
+      <select id="filterPriority" onchange="renderTasks()"><option value="">Toutes les priorités</option><option value="high">Haute</option><option value="medium">Moyenne</option><option value="low">Basse</option></select>
+      <select id="filterDue" onchange="renderTasks()"><option value="">Toutes les échéances</option><option value="overdue">En retard</option><option value="today">Aujourd'hui</option><option value="soon">Dans les 7 jours</option><option value="nodate">Sans date</option></select>
     </div>
-    <div>
-      <div class="nav-label">Espace de travail</div>
-      <nav class="nav" id="navigation">
-        <button class="active" data-view="dashboard"><span class="emoji">▦</span> Tableau de bord</button>
-        <button data-view="tasks"><span class="emoji">☑</span> Mes tâches</button>
-        <button data-view="calendar"><span class="emoji">▦</span> Calendrier</button>
-        <button data-view="projects"><span class="emoji">◈</span> Projets</button>
-        <button data-view="stats"><span class="emoji">▤</span> Statistiques</button>
-        <button data-view="settings"><span class="emoji">⚙</span> Sauvegardes</button>
-      </nav>
+    <div id="taskList" class="task-list"></div>
+  </div>
+</section>
+
+<section id="view-calendar" class="view hidden">
+  <div class="card">
+    <div class="calendar-head">
+      <button class="btn" onclick="changeMonth(-1)">← Précédent</button>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 id="calendarTitle"></h3><button class="btn small" onclick="goToToday()">Aujourd'hui</button></div>
+      <button class="btn" onclick="changeMonth(1)">Suivant →</button>
     </div>
-    <div class="sidebar-bottom">
-      <strong>Ton espace personnel</strong>
-      <p>Organise tes études, tes projets informatiques, le football et tes tâches du quotidien.</p>
-      <button class="btn small" style="width:100%" onclick="openTaskModal()">＋ Nouvelle tâche</button>
+    <div class="calendar-grid" id="calendarGrid"></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="section-head"><h3 id="selectedDateTitle">Tâches du jour</h3><button class="btn primary" onclick="openTaskModal('',selectedDate)">＋ Ajouter à cette date</button></div>
+    <div id="calendarTasks" class="task-list"></div>
+  </div>
+</section>
+
+<section id="view-projects" class="view hidden">
+  <div class="card"><div class="section-head"><h3>🚀 Mes projets</h3><button class="btn primary" onclick="openProjectModal()">＋ Nouveau projet</button></div><div id="projectList"></div></div>
+</section>
+
+<section id="view-stats" class="view hidden">
+  <div class="grid stats" id="statsCards"></div>
+  <div class="grid columns">
+    <div class="card"><div class="section-head"><h3>Répartition par catégorie</h3></div><div id="categoryStats"></div></div>
+    <div class="card"><div class="section-head"><h3>État des tâches</h3></div><div id="statusStats"></div></div>
+  </div>
+</section>
+
+<section id="view-settings" class="view hidden">
+  <div class="grid columns">
+    <div class="card">
+      <div class="section-head"><h3>🎨 Personnalisation</h3></div>
+      <div class="setting-row"><span>Thème de l'interface</span><button class="btn" onclick="toggleTheme()">Changer de thème</button></div>
+      <div class="setting-row"><span>Couleur d'accentuation</span><div class="color-options" id="colorOptions"></div></div>
     </div>
-  </aside>
-
-  <main class="main">
-    <header class="topbar">
-      <div>
-        <div class="eyebrow" id="pageEyebrow">TON ESPACE</div>
-        <h2 id="pageTitle">Bonjour !</h2>
-        <p class="subtitle" id="pageSubtitle">Retrouve l'essentiel de ton activité.</p>
-      </div>
-      <div class="top-actions">
-        <input class="search" id="globalSearch" type="search" placeholder="Rechercher une tâche ou un projet…" aria-label="Rechercher">
-        <button class="btn" id="themeButton" onclick="toggleTheme()">☀️ / 🌙</button>
-        <button class="btn primary" onclick="openTaskModal()">＋ Ajouter</button>
-      </div>
-    </header>
-
-    <section id="view-dashboard" class="view">
-      <div class="grid stats-grid" id="dashboardStats"></div>
-      <div id="dashboardAlerts"></div>
-      <div class="grid columns">
-        <div class="card">
-          <div class="section-head"><h3>📋 Tâches à suivre</h3><button class="btn small" onclick="showView('tasks')">Tout voir →</button></div>
-          <div class="task-list" id="dashboardTasks"></div>
-        </div>
-        <div class="card">
-          <div class="section-head"><h3>🚀 Mes projets</h3><button class="btn small" onclick="showView('projects')">Tout voir →</button></div>
-          <div id="dashboardProjects"></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="view-tasks" class="view hidden">
-      <div class="card">
-        <div class="section-head"><h3>📋 Toutes mes tâches</h3><button class="btn primary" onclick="openTaskModal()">＋ Nouvelle tâche</button></div>
-        <div class="filters">
-          <select id="filterCategory" onchange="renderTasks()"><option value="">Toutes les catégories</option><option>Informatique</option><option>Football</option><option>Études</option><option>Personnel</option><option>Autre</option></select>
-          <select id="filterStatus" onchange="renderTasks()"><option value="">Tous les états</option><option value="todo">À faire</option><option value="done">Terminées</option></select>
-          <select id="filterPriority" onchange="renderTasks()"><option value="">Toutes les priorités</option><option value="high">Haute</option><option value="medium">Moyenne</option><option value="low">Basse</option></select>
-          <select id="filterDue" onchange="renderTasks()"><option value="">Toutes les échéances</option><option value="overdue">En retard</option><option value="today">Aujourd'hui</option><option value="soon">Dans les 7 jours</option><option value="nodate">Sans date</option></select>
-        </div>
-        <div class="task-list" id="taskList"></div>
-      </div>
-    </section>
-
-    <section id="view-calendar" class="view hidden">
-      <div class="card">
-        <div class="calendar-head">
-          <button class="btn" onclick="changeMonth(-1)">← Précédent</button>
-          <h3 id="calendarTitle"></h3>
-          <button class="btn" onclick="changeMonth(1)">Suivant →</button>
-        </div>
-        <div class="calendar-grid" id="calendarGrid"></div>
-      </div>
-      <div class="card" style="margin-top:16px">
-        <div class="section-head"><h3 id="selectedDateTitle">Tâches du jour</h3><button class="btn primary" onclick="openTaskModal('',selectedDate)">＋ Ajouter à cette date</button></div>
-        <div class="task-list" id="calendarTasks"></div>
-      </div>
-    </section>
-
-    <section id="view-projects" class="view hidden">
-      <div class="card">
-        <div class="section-head"><h3>🚀 Mes projets</h3><button class="btn primary" onclick="openProjectModal()">＋ Nouveau projet</button></div>
-        <div id="projectList"></div>
-      </div>
-    </section>
-
-    <section id="view-stats" class="view hidden">
-      <div class="grid stats-grid" id="statsCards"></div>
-      <div class="grid columns">
-        <div class="card"><div class="section-head"><h3>Répartition par catégorie</h3></div><div id="categoryStats"></div></div>
-        <div class="card"><div class="section-head"><h3>État des tâches</h3></div><div id="statusStats"></div></div>
-      </div>
-    </section>
-
-    <section id="view-settings" class="view hidden">
-      <div class="grid columns">
-        <div class="card">
-          <div class="section-head"><h3>💾 Sauvegarder mes données</h3></div>
-          <p class="subtitle">Exporte les tâches, les projets et les raccourcis dans un fichier JSON que tu pourras conserver sur ton ordinateur.</p>
-          <button class="btn primary" style="margin-top:16px" onclick="exportData()">⬇ Exporter mes données</button>
-        </div>
-        <div class="card">
-          <div class="section-head"><h3>📂 Restaurer une sauvegarde</h3></div>
-          <p class="subtitle">Choisis un fichier JSON précédemment exporté. Les données actuelles seront remplacées après confirmation.</p>
-          <input id="importFile" type="file" accept=".json,application/json" style="margin-top:16px;max-width:100%">
-          <button class="btn" style="margin-top:12px" onclick="importData()">⬆ Importer la sauvegarde</button>
-        </div>
-        <div class="card">
-          <div class="section-head"><h3>🔗 Mes raccourcis</h3><button class="btn small" onclick="openLinkModal()">＋ Ajouter</button></div>
-          <div id="settingsLinks"></div>
-        </div>
-        <div class="card">
-          <div class="section-head"><h3>ℹ️ À propos</h3></div>
-          <p class="subtitle">MySpace Dashboard V3 est un tableau de bord personnel qui fonctionne directement dans ton navigateur.</p>
-          <p class="subtitle">Les données sont enregistrées localement. GitHub Pages ne synchronise pas automatiquement les données entre appareils.</p>
-          <p class="subtitle">Pense à exporter régulièrement une sauvegarde JSON.</p>
-          <button class="btn danger" onclick="resetData()">Réinitialiser toutes les données</button>
-        </div>
-      </div>
-    </section>
-
-    <div class="footer">MySpace Dashboard V3 · Ton espace, ton organisation.</div>
-  </main>
+    <div class="card">
+      <div class="section-head"><h3>💾 Sauvegardes</h3></div>
+      <p class="subtitle">Télécharge une copie de tes données ou restaure un fichier JSON créé par MySpace.</p>
+      <button class="btn primary" style="margin-top:15px" onclick="exportData()">⬇ Exporter mes données</button>
+      <div style="margin-top:18px"><label for="importFile" class="muted small-text">Fichier JSON à restaurer</label><input id="importFile" type="file" accept=".json,application/json" style="display:block;max-width:100%;margin:9px 0"></div>
+      <button class="btn" onclick="importData()">⬆ Importer la sauvegarde</button>
+      <p class="subtitle" style="margin-top:15px">Dernière sauvegarde exportée : <strong id="lastExport">Aucune sauvegarde exportée dans cette session</strong></p>
+    </div>
+    <div class="card">
+      <div class="section-head"><h3>🔗 Mes raccourcis</h3><button class="btn small" onclick="openLinkModal()">＋ Ajouter</button></div>
+      <div id="settingsLinks"></div>
+    </div>
+    <div class="card">
+      <div class="section-head"><h3>🛡️ Gestion des données</h3></div>
+      <p class="subtitle">Les données sont stockées dans ce navigateur. Elles ne sont pas automatiquement partagées avec GitHub ni avec tes autres appareils.</p>
+      <button class="btn danger" style="margin-top:15px" onclick="resetData()">Réinitialiser toutes les données</button>
+    </div>
+  </div>
+</section>
+<div class="footer">MySpace Dashboard V4 · Organise tes idées, construis tes projets.</div>
+</main>
 </div>
 
-<!-- Fenêtre de création/modification de tâche -->
 <div class="modal-backdrop" id="taskModal" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
-  <div class="modal">
-    <div class="modal-head"><h3 id="taskModalTitle">Nouvelle tâche</h3><button class="btn small" onclick="closeModal('taskModal')">✕</button></div>
-    <form id="taskForm">
-      <input type="hidden" id="taskId">
-      <div class="form-grid">
-        <div class="field full"><label for="taskTitle">Nom de la tâche *</label><input id="taskTitle" required maxlength="150" placeholder="Ex. Installer un serveur Debian"></div>
-        <div class="field"><label for="taskCategory">Catégorie</label><select id="taskCategory"><option>Informatique</option><option>Football</option><option>Études</option><option>Personnel</option><option>Autre</option></select></div>
-        <div class="field"><label for="taskPriority">Priorité</label><select id="taskPriority"><option value="high">Haute</option><option value="medium" selected>Moyenne</option><option value="low">Basse</option></select></div>
-        <div class="field"><label for="taskDue">Échéance</label><input id="taskDue" type="date"></div>
-        <div class="field"><label for="taskProject">Projet associé</label><select id="taskProject"><option value="">Aucun projet</option></select></div>
-        <div class="field full"><label for="taskDescription">Description (facultatif)</label><textarea id="taskDescription" maxlength="1000" placeholder="Notes, étapes, informations utiles…"></textarea></div>
-      </div>
-      <div class="modal-actions"><button type="button" class="btn" onclick="closeModal('taskModal')">Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div>
-    </form>
-  </div>
+<div class="modal">
+  <div class="modal-head"><h3 id="taskModalTitle">Nouvelle tâche</h3><button class="btn small" onclick="closeModal('taskModal')">✕</button></div>
+  <form id="taskForm">
+    <input type="hidden" id="taskId">
+    <div class="form-grid">
+      <div class="field full"><label for="taskTitle">Nom de la tâche *</label><input id="taskTitle" required maxlength="150" placeholder="Ex. Installer un serveur Debian"></div>
+      <div class="field"><label for="taskCategory">Catégorie</label><select id="taskCategory"><option>Informatique</option><option>Football</option><option>Études</option><option>Personnel</option><option>Autre</option></select></div>
+      <div class="field"><label for="taskPriority">Priorité</label><select id="taskPriority"><option value="high">Haute</option><option value="medium" selected>Moyenne</option><option value="low">Basse</option></select></div>
+      <div class="field"><label for="taskDue">Échéance</label><input id="taskDue" type="date"></div>
+      <div class="field"><label for="taskProject">Projet associé</label><select id="taskProject"><option value="">Aucun projet</option></select></div>
+      <div class="field full"><label for="taskDescription">Description</label><textarea id="taskDescription" maxlength="1000" placeholder="Notes et informations utiles…"></textarea></div>
+    </div>
+    <div class="modal-actions"><button type="button" class="btn" onclick="closeModal('taskModal')">Annuler</button><button type="submit" class="btn primary">Enregistrer</button></div>
+  </form>
+</div>
 </div>
 
-<!-- Fenêtre de création/modification de projet -->
 <div class="modal-backdrop" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
-  <div class="modal">
-    <div class="modal-head"><h3 id="projectModalTitle">Nouveau projet</h3><button class="btn small" onclick="closeModal('projectModal')">✕</button></div>
-    <form id="projectForm">
-      <input type="hidden" id="projectId">
-      <div class="form-grid">
-        <div class="field full"><label for="projectName">Nom du projet *</label><input id="projectName" required maxlength="150" placeholder="Ex. Site web personnel"></div>
-        <div class="field full"><label for="projectDescription">Description</label><textarea id="projectDescription" maxlength="1000" placeholder="Objectif du projet…"></textarea></div>
-        <div class="field"><label for="projectProgress">Progression (%)</label><input id="projectProgress" type="number" min="0" max="100" value="0"></div>
-        <div class="field"><label for="projectStatus">Statut</label><select id="projectStatus"><option>En cours</option><option>En attente</option><option>Terminé</option></select></div>
-      </div>
-      <div class="modal-actions"><button type="button" class="btn" onclick="closeModal('projectModal')">Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div>
-    </form>
-  </div>
+<div class="modal">
+  <div class="modal-head"><h3 id="projectModalTitle">Nouveau projet</h3><button class="btn small" onclick="closeModal('projectModal')">✕</button></div>
+  <form id="projectForm">
+    <input type="hidden" id="projectId">
+    <div class="form-grid">
+      <div class="field full"><label for="projectName">Nom du projet *</label><input id="projectName" required maxlength="150" placeholder="Ex. Site web personnel"></div>
+      <div class="field full"><label for="projectDescription">Description</label><textarea id="projectDescription" maxlength="1000"></textarea></div>
+      <div class="field"><label for="projectProgress">Progression (%)</label><input id="projectProgress" type="number" min="0" max="100" value="0"></div>
+      <div class="field"><label for="projectStatus">Statut</label><select id="projectStatus"><option>En cours</option><option>En attente</option><option>Terminé</option></select></div>
+      <div class="field full"><label for="projectMilestones">Étapes du projet (une par ligne)</label><textarea id="projectMilestones" placeholder="Préparer le projet&#10;Développer les fonctionnalités&#10;Tester et publier"></textarea></div>
+    </div>
+    <div class="modal-actions"><button type="button" class="btn" onclick="closeModal('projectModal')">Annuler</button><button type="submit" class="btn primary">Enregistrer</button></div>
+  </form>
+</div>
 </div>
 
-<!-- Fenêtre de raccourci -->
 <div class="modal-backdrop" id="linkModal" role="dialog" aria-modal="true" aria-labelledby="linkModalTitle">
-  <div class="modal">
-    <div class="modal-head"><h3 id="linkModalTitle">Nouveau raccourci</h3><button class="btn small" onclick="closeModal('linkModal')">✕</button></div>
-    <form id="linkForm">
-      <div class="form-grid">
-        <div class="field full"><label for="linkName">Nom *</label><input id="linkName" required maxlength="80" placeholder="Ex. GitHub"></div>
-        <div class="field full"><label for="linkUrl">Adresse web *</label><input id="linkUrl" type="url" required placeholder="https://github.com/"></div>
-      </div>
-      <div class="modal-actions"><button type="button" class="btn" onclick="closeModal('linkModal')">Annuler</button><button class="btn primary" type="submit">Ajouter</button></div>
-    </form>
-  </div>
+<div class="modal">
+  <div class="modal-head"><h3 id="linkModalTitle">Nouveau raccourci</h3><button class="btn small" onclick="closeModal('linkModal')">✕</button></div>
+  <form id="linkForm">
+    <div class="form-grid">
+      <div class="field full"><label for="linkName">Nom *</label><input id="linkName" required maxlength="80" placeholder="Ex. GitHub"></div>
+      <div class="field full"><label for="linkUrl">Adresse web *</label><input id="linkUrl" type="url" required placeholder="https://github.com/"></div>
+    </div>
+    <div class="modal-actions"><button type="button" class="btn" onclick="closeModal('linkModal')">Annuler</button><button class="btn primary" type="submit">Ajouter</button></div>
+  </form>
 </div>
-
+</div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 "use strict";
-
-const STORAGE_KEY = "myspace_dashboard_v3";
-const $ = id => document.getElementById(id);
-const todayISO = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const STORAGE_KEY="myspace_dashboard_v3";
+const $=id=>document.getElementById(id);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const todayISO=()=>{
+ const d=new Date();
+ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 };
-const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
-
-const defaultData = () => ({
-  tasks: [],
-  projects: [],
-  links: [
-    {id:uid(),name:"GitHub",url:"https://github.com/"},
-    {id:uid(),name:"GitHub Pages",url:"https://pages.github.com/"},
-    {id:uid(),name:"MDN Web Docs",url:"https://developer.mozilla.org/fr/"}
-  ],
-  theme:"dark"
-});
-
+function defaults(){return{
+ tasks:[],projects:[],
+ links:[
+  {id:uid(),name:"GitHub",url:"https://github.com/"},
+  {id:uid(),name:"GitHub Pages",url:"https://pages.github.com/"},
+  {id:uid(),name:"MDN Web Docs",url:"https://developer.mozilla.org/fr/"}
+ ],
+ theme:"dark",accent:"#61a8ff",lastExport:""
+};}
 function loadData(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return defaultData();
-    const d = JSON.parse(raw);
-    return {
-      tasks:Array.isArray(d.tasks)?d.tasks:[],
-      projects:Array.isArray(d.projects)?d.projects:[],
-      links:Array.isArray(d.links)?d.links:defaultData().links,
-      theme:d.theme==="light"?"light":"dark"
-    };
-  }catch(e){
-    return defaultData();
-  }
-}
-
-let data = loadData();
-let currentView = "dashboard";
-let calendarDate = new Date();
-let selectedDate = todayISO();
-let searchText = "";
-
-function saveData(){
-  try{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
-  }catch(e){
-    toast("Impossible d'enregistrer les données. Vérifie l'espace disponible du navigateur.");
-  }
-}
-
-function esc(value){
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  })[c]);
-}
-
-function toast(message){
-  const el=$("toast");
-  el.textContent=message;
-  el.classList.add("show");
-  clearTimeout(toast.timer);
-  toast.timer=setTimeout(()=>el.classList.remove("show"),3200);
-}
-
-function showView(view){
-  currentView=view;
-  document.querySelectorAll(".view").forEach(el=>el.classList.add("hidden"));
-  $("view-"+view).classList.remove("hidden");
-  document.querySelectorAll("#navigation button").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
-  const headings={
-    dashboard:["TON ESPACE","Bonjour !","Retrouve l'essentiel de ton activité."],
-    tasks:["ORGANISATION","Mes tâches","Planifie et suis ce que tu as à faire."],
-    calendar:["PLANIFICATION","Mon calendrier","Visualise tes échéances et tes tâches."],
-    projects:["RÉALISATIONS","Mes projets","Suis l'avancement de tes projets."],
-    stats:["ANALYSE","Mes statistiques","Fais le point sur ton organisation."],
-    settings:["PARAMÈTRES","Sauvegardes et réglages","Protège tes données et gère tes raccourcis."]
+ try{
+  const raw=localStorage.getItem(STORAGE_KEY);
+  if(!raw)return defaults();
+  const old=JSON.parse(raw),d=defaults();
+  return {
+   tasks:Array.isArray(old.tasks)?old.tasks.map(t=>({...t,category:t.category||"Autre",priority:t.priority||"medium",done:!!t.done})):[],
+   projects:Array.isArray(old.projects)?old.projects.map(p=>({...p,milestones:Array.isArray(p.milestones)?p.milestones:[]})):[],
+   links:Array.isArray(old.links)?old.links:d.links,
+   theme:old.theme==="light"?"light":"dark",
+   accent:old.accent||"#61a8ff",
+   lastExport:old.lastExport||""
   };
-  $("pageEyebrow").textContent=headings[view][0];
-  $("pageTitle").textContent=headings[view][1];
-  $("pageSubtitle").textContent=headings[view][2];
-  renderAll();
+ }catch(e){return defaults();}
+}
+let data=loadData(),currentView="dashboard",calendarDate=new Date(),selectedDate=todayISO(),searchText="";
+const accentChoices=["#61a8ff","#8b7bff","#43d7a1","#ffad66","#ff7185","#42c8cf"];
+function saveData(){
+ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}
+ catch(e){toast("Enregistrement impossible : espace de stockage insuffisant.");}
+}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function toast(msg){
+ const el=$("toast");el.textContent=msg;el.classList.add("show");
+ clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),3500);
+}
+function showView(view){
+ currentView=view;
+ document.querySelectorAll(".view").forEach(v=>v.classList.add("hidden"));
+ $("view-"+view).classList.remove("hidden");
+ document.querySelectorAll("#navigation button").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
+ const titles={
+ dashboard:["TON ESPACE","Bonjour !","Retrouve l'essentiel de ton activité."],
+ tasks:["ORGANISATION","Mes tâches","Planifie et suis ce que tu as à faire."],
+ calendar:["PLANIFICATION","Mon calendrier","Visualise tes échéances et tes tâches."],
+ projects:["RÉALISATIONS","Mes projets","Suis l'avancement de tes projets."],
+ stats:["ANALYSE","Mes statistiques","Fais le point sur ton organisation."],
+ settings:["PARAMÈTRES","Réglages et sauvegardes","Personnalise et protège tes données."]
+ };
+ $("pageEyebrow").textContent=titles[view][0];$("pageTitle").textContent=titles[view][1];$("pageSubtitle").textContent=titles[view][2];
+ renderAll();
 }
 document.querySelectorAll("#navigation button").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
-
-function toggleTheme(){
-  data.theme=data.theme==="dark"?"light":"dark";
-  applyTheme();saveData();
-}
 function applyTheme(){
-  document.body.classList.toggle("light",data.theme==="light");
-  $("themeButton").textContent=data.theme==="light"?"🌙 Mode sombre":"☀️ Mode clair";
+ document.body.classList.toggle("light",data.theme==="light");
+ document.documentElement.style.setProperty("--accent",data.accent||"#61a8ff");
+ $("themeButton").textContent=data.theme==="light"?"🌙 Mode sombre":"☀️ Mode clair";
+ renderColorOptions();
 }
+function toggleTheme(){data.theme=data.theme==="light"?"dark":"light";applyTheme();saveData();}
+function renderColorOptions(){
+ if(!$("colorOptions"))return;
+ $("colorOptions").innerHTML=accentChoices.map(c=>`<button class="color-choice ${data.accent===c?"selected":""}" style="background:${c}" title="Choisir cette couleur" aria-label="Choisir cette couleur" onclick="setAccent('${c}')"></button>`).join("");
+}
+function setAccent(color){data.accent=color;applyTheme();saveData();toast("Couleur mise à jour.");}
+function closeModal(id){$(id).classList.remove("open");}
+function openModal(id){$(id).classList.add("open");}
+document.querySelectorAll(".modal-backdrop").forEach(b=>b.addEventListener("click",e=>{if(e.target===b)closeModal(b.id)}));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal-backdrop.open").forEach(m=>closeModal(m.id));});
 
-function closeModal(id){$(id).classList.remove("open")}
-function openModal(id){$(id).classList.add("open")}
-document.querySelectorAll(".modal-backdrop").forEach(backdrop=>{
-  backdrop.addEventListener("click",e=>{if(e.target===backdrop)closeModal(backdrop.id)});
-});
-document.addEventListener("keydown",e=>{
-  if(e.key==="Escape")document.querySelectorAll(".modal-backdrop.open").forEach(m=>closeModal(m.id));
-});
-
-function isOverdue(task){
-  return !task.done && task.due && task.due<todayISO();
+function isOverdue(t){return !t.done&&!!t.due&&t.due<todayISO();}
+function isToday(t){return !t.done&&t.due===todayISO();}
+function daysFromToday(date){
+ if(!date)return Infinity;
+ return Math.round((new Date(date+"T12:00:00")-new Date(todayISO()+"T12:00:00"))/86400000);
 }
-function isToday(task){return !task.done && task.due===todayISO()}
-function isSoon(task){
-  if(task.done||!task.due) return false;
-  const diff=(new Date(task.due+"T12:00:00")-new Date(todayISO()+"T12:00:00"))/86400000;
-  return diff>=0&&diff<=7;
+function isSoon(t){const n=daysFromToday(t.due);return !t.done&&n>=0&&n<=7;}
+function formatDate(v){if(!v)return "Sans échéance";const p=v.split("-");return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:v;}
+function catEmoji(c){return {"Informatique":"💻","Football":"⚽","Études":"📚","Personnel":"👤","Autre":"📌"}[c]||"📌";}
+function priorityLabel(p){return {high:"Haute",medium:"Moyenne",low:"Basse"}[p]||"Moyenne";}
+function projectName(id){return data.projects.find(p=>p.id===id)?.name||"";}
+function dueBadge(t){
+ if(!t.due)return "";
+ if(isOverdue(t))return `<span class="badge overdue">En retard · ${formatDate(t.due)}</span>`;
+ if(isToday(t))return `<span class="badge overdue">Aujourd'hui</span>`;
+ if(isSoon(t))return `<span class="badge soon">Bientôt · ${formatDate(t.due)}</span>`;
+ return `<span class="badge">📅 ${formatDate(t.due)}</span>`;
 }
-function formatDate(value){
-  if(!value) return "Sans échéance";
-  const parts=value.split("-");
-  return parts.length===3?`${parts[2]}/${parts[1]}/${parts[0]}`:value;
-}
-function categoryEmoji(category){
-  return {"Informatique":"💻","Football":"⚽","Études":"📚","Personnel":"👤","Autre":"📌"}[category]||"📌";
-}
-function priorityLabel(p){return {high:"Haute",medium:"Moyenne",low:"Basse"}[p]||"Moyenne"}
-function projectName(id){return data.projects.find(p=>p.id===id)?.name||""}
-
-function dueBadge(task){
-  if(!task.due) return "";
-  if(isOverdue(task)) return `<span class="badge overdue">En retard · ${formatDate(task.due)}</span>`;
-  if(isToday(task)) return `<span class="badge overdue">Aujourd'hui</span>`;
-  if(isSoon(task)) return `<span class="badge soon">Bientôt · ${formatDate(task.due)}</span>`;
-  return `<span class="badge">📅 ${formatDate(task.due)}</span>`;
-}
-
 function taskMatchesSearch(t){
-  if(!searchText)return true;
-  const project=projectName(t.projectId);
-  return [t.title,t.description,t.category,project,priorityLabel(t.priority)]
-    .some(v=>String(v||"").toLowerCase().includes(searchText));
+ if(!searchText)return true;
+ return [t.title,t.description,t.category,projectName(t.projectId),priorityLabel(t.priority)]
+ .some(v=>String(v||"").toLowerCase().includes(searchText));
 }
-
 function taskCard(t){
-  const cat=t.category||"Autre";
-  return `<article class="task ${t.done?"done":""}">
-    <input class="check" type="checkbox" aria-label="Terminer la tâche" ${t.done?"checked":""} onchange="toggleTask('${t.id}')" >
-    <div class="task-main">
-      <div class="task-title">${esc(t.title)}</div>
-      ${t.description?`<div class="muted small-text" style="margin-top:5px;overflow-wrap:anywhere">${esc(t.description)}</div>`:""}
-      <div class="task-meta">
-        <span class="badge">${categoryEmoji(cat)} ${esc(cat)}</span>
-        <span class="badge ${esc(t.priority||"medium")}">Priorité ${priorityLabel(t.priority)}</span>
-        ${dueBadge(t)}
-        ${t.projectId&&projectName(t.projectId)?`<span class="badge">◈ ${esc(projectName(t.projectId))}</span>`:""}
-      </div>
-    </div>
-    <div class="task-actions">
-      <button class="btn small" onclick="openTaskModal('${t.id}')" aria-label="Modifier la tâche">✎</button>
-      <button class="btn small danger" onclick="deleteTask('${t.id}')" aria-label="Supprimer la tâche">✕</button>
-    </div>
-  </article>`;
+ return `<article class="task ${t.done?"done":""}">
+ <input class="check" type="checkbox" aria-label="Terminer la tâche" ${t.done?"checked":""} onchange="toggleTask('${t.id}')">
+ <div class="task-main"><div class="task-title">${esc(t.title)}</div>
+ ${t.description?`<div class="task-desc">${esc(t.description)}</div>`:""}
+ <div class="task-meta"><span class="badge">${catEmoji(t.category)} ${esc(t.category)}</span>
+ <span class="badge ${esc(t.priority)}">Priorité ${priorityLabel(t.priority)}</span>${dueBadge(t)}
+ ${t.projectId&&projectName(t.projectId)?`<span class="badge">◈ ${esc(projectName(t.projectId))}</span>`:""}</div></div>
+ <div class="task-actions"><button class="btn small" onclick="openTaskModal('${t.id}')" aria-label="Modifier">✎</button><button class="btn small danger" onclick="deleteTask('${t.id}')" aria-label="Supprimer">✕</button></div>
+ </article>`;
 }
-
-function renderTaskList(container,tasks,message="Aucune tâche à afficher."){
-  $(container).innerHTML=tasks.length?tasks.map(taskCard).join():`<div class="empty">${message}<br>Tu peux en ajouter une avec le bouton « Nouvelle tâche ».</div>`;
+function renderTaskList(id,tasks,message="Aucune tâche à afficher."){
+ $(id).innerHTML=tasks.length?tasks.map(taskCard).join():`<div class="empty">${message}<br>Tu peux en ajouter une avec le bouton « Nouvelle tâche ».</div>`;
 }
-
-function renderStatsCards(){
-  const tasks=data.tasks;
-  const total=tasks.length,done=tasks.filter(t=>t.done).length;
-  const overdue=tasks.filter(isOverdue).length;
-  const activeProjects=data.projects.filter(p=>p.status!=="Terminé").length;
-  const stats=[
-    ["Total des tâches",total,"📋","Toutes catégories confondues"],
-    ["Terminées",done,"✅",total?`${Math.round(done/total*100)} % des tâches`:"Aucune tâche créée"],
-    ["En retard",overdue,"⏰",overdue?"À examiner en priorité":"Aucun retard"],
-    ["Projets actifs",activeProjects,"🚀","Projets non terminés"]
-  ];
-  return stats.map(s=>`<div class="card"><div class="stat-head">${s[0]} <span class="stat-icon">${s[2]}</span></div><div class="stat-number">${s[1]}</div><div class="stat-foot">${s[3]}</div></div>`).join("");
+function statCards(){
+ const tasks=data.tasks,total=tasks.length,done=tasks.filter(t=>t.done).length,overdue=tasks.filter(isOverdue).length,active=data.projects.filter(p=>p.status!=="Terminé").length;
+ return [["Total des tâches",total,"📋","Toutes catégories"],["Terminées",done,"✅",total?Math.round(done/total*100)+" % des tâches":"Aucune tâche créée"],["En retard",overdue,"⏰",overdue?"À examiner en priorité":"Aucun retard"],["Projets actifs",active,"🚀","Projets non terminés"]]
+ .map(s=>`<div class="card"><div class="stat-head">${s[0]} <span class="stat-icon">${s[2]}</span></div><div class="stat-num">${s[1]}</div><div class="stat-foot">${s[3]}</div></div>`).join("");
 }
-
 function projectCard(p){
-  const count=data.tasks.filter(t=>t.projectId===p.id).length;
-  const percent=Math.max(0,Math.min(100,Number(p.progress)||0));
-  return `<div class="project">
-    <div class="project-line"><div class="project-title">${esc(p.name)}</div><span class="badge">${esc(p.status||"En cours")}</span></div>
-    ${p.description?`<p class="muted small-text">${esc(p.description)}</p>`:""}
-    <div class="progress"><span style="width:${percent}%"></span></div>
-    <div class="project-line"><span class="muted">${percent}% · ${count} tâche(s) associée(s)</span>
-      <div class="project-actions">
-        <button class="btn small" onclick="openProjectModal('${p.id}')">✎ Modifier</button>
-        <button class="btn small danger" onclick="deleteProject('${p.id}')">✕</button>
-      </div>
-    </div>
-  </div>`;
+ const count=data.tasks.filter(t=>t.projectId===p.id).length,percent=Math.max(0,Math.min(100,Number(p.progress)||0));
+ const milestones=Array.isArray(p.milestones)?p.milestones:[];
+ return `<div class="project">
+ <div class="project-line"><div class="project-title">${esc(p.name)}</div><span class="badge">${esc(p.status||"En cours")}</span></div>
+ ${p.description?`<p class="muted small-text">${esc(p.description)}</p>`:""}
+ <div class="progress"><span style="width:${percent}%"></span></div>
+ <div class="project-line"><span class="muted small-text">${percent}% · ${count} tâche(s) associée(s)</span><div class="project-actions"><button class="btn small" onclick="openProjectModal('${p.id}')">✎ Modifier</button><button class="btn small danger" onclick="deleteProject('${p.id}')">✕</button></div></div>
+ ${milestones.length?`<div style="margin-top:13px"><strong class="small-text">Étapes du projet</strong>${milestones.map((m,i)=>`<div class="small-text muted" style="margin-top:7px">• ${esc(m)}</div>`).join("")}</div>`:""}
+ </div>`;
 }
-
-function renderProjects(){
-  const projects=data.projects.filter(p=>!searchText||[p.name,p.description,p.status].some(v=>String(v||"").toLowerCase().includes(searchText)));
-  $("projectList").innerHTML=projects.length?projects.map(projectCard).join():'<div class="empty">Aucun projet. Crée ton premier projet pour suivre son avancement.</div>';
-  $("dashboardProjects").innerHTML=projects.slice(0,3).map(projectCard).join()||'<div class="empty">Tes projets apparaîtront ici.</div>';
-}
-
 function renderDashboard(){
-  $("dashboardStats").innerHTML=renderStatsCards();
-  const tasks=data.tasks.filter(t=>!t.done&&taskMatchesSearch(t)).sort((a,b)=>{
-    if(isOverdue(a)!==isOverdue(b))return isOverdue(a)?-1:1;
-    if(!a.due)return 1;if(!b.due)return -1;return a.due.localeCompare(b.due);
-  });
-  renderTaskList("dashboardTasks",tasks.slice(0,5),"Aucune tâche en cours.");
-  const alerts=data.tasks.filter(t=>isOverdue(t)||isToday(t)||isSoon(t)).filter(taskMatchesSearch);
-  $("dashboardAlerts").innerHTML=alerts.length?`<div class="card" style="margin-bottom:20px"><div class="section-head"><h3>🔔 Échéances à surveiller</h3><span class="badge">${alerts.length} alerte(s)</span></div>${alerts.slice(0,5).map(t=>`<div class="alert ${isOverdue(t)||isToday(t)?"red":"orange"}"><strong>${isOverdue(t)?"En retard":isToday(t)?"À faire aujourd'hui":"Échéance proche"} :</strong> ${esc(t.title)} · ${formatDate(t.due)}</div>`).join("")}</div>`:"";
+ $("dashboardStats").innerHTML=statCards();
+ const tasks=data.tasks.filter(t=>!t.done&&taskMatchesSearch).sort((a,b)=>{
+  if(isOverdue(a)!==isOverdue(b))return isOverdue(a)?-1:1;
+  if(!a.due)return 1;if(!b.due)return -1;return a.due.localeCompare(b.due);
+ });
+ renderTaskList("dashboardTasks",tasks.slice(0,5),"Aucune tâche en cours.");
+ const alerts=data.tasks.filter(t=>(isOverdue(t)||isToday(t)||isSoon(t))&&taskMatchesSearch(t));
+ $("dashboardAlerts").innerHTML=alerts.length?`<div class="card" style="margin-bottom:17px"><div class="section-head"><h3>🔔 Échéances à surveiller</h3><span class="badge">${alerts.length} alerte(s)</span></div>${alerts.slice(0,6).map(t=>`<div class="alert ${isOverdue(t)||isToday(t)?"red":"orange"}"><strong>${isOverdue(t)?"En retard":isToday(t)?"À faire aujourd'hui":"Échéance proche"} :</strong> ${esc(t.title)} · ${formatDate(t.due)}</div>`).join("")}</div>`:"";
 }
-
 function renderTasks(){
-  let tasks=data.tasks.filter(taskMatchesSearch);
-  const category=$("filterCategory").value,status=$("filterStatus").value,priority=$("filterPriority").value,due=$("filterDue").value;
-  if(category)tasks=tasks.filter(t=>t.category===category);
-  if(status==="todo")tasks=tasks.filter(t=>!t.done);
-  if(status==="done")tasks=tasks.filter(t=>t.done);
-  if(priority)tasks=tasks.filter(t=>t.priority===priority);
-  if(due==="overdue")tasks=tasks.filter(isOverdue);
-  if(due==="today")tasks=tasks.filter(isToday);
-  if(due==="soon")tasks=tasks.filter(isSoon);
-  if(due==="nodate")tasks=tasks.filter(t=>!t.due);
-  tasks.sort((a,b)=>{
-    if(a.done!==b.done)return a.done?1:-1;
-    if(!a.due)return 1;if(!b.due)return -1;return a.due.localeCompare(b.due);
-  });
-  renderTaskList("taskList",tasks);
+ let tasks=data.tasks.filter(taskMatchesSearch);
+ const cat=$("filterCategory").value,status=$("filterStatus").value,priority=$("filterPriority").value,due=$("filterDue").value;
+ if(cat)tasks=tasks.filter(t=>t.category===cat);
+ if(status==="todo")tasks=tasks.filter(t=>!t.done);
+ if(status==="done")tasks=tasks.filter(t=>t.done);
+ if(priority)tasks=tasks.filter(t=>t.priority===priority);
+ if(due==="overdue")tasks=tasks.filter(isOverdue);
+ if(due==="today")tasks=tasks.filter(isToday);
+ if(due==="soon")tasks=tasks.filter(isSoon);
+ if(due==="nodate")tasks=tasks.filter(t=>!t.due);
+ tasks.sort((a,b)=>{if(a.done!==b.done)return a.done?1:-1;if(!a.due)return 1;if(!b.due)return -1;return a.due.localeCompare(b.due)});
+ renderTaskList("taskList",tasks);
 }
-
+function renderProjects(){
+ const projects=data.projects.filter(p=>!searchText||[p.name,p.description,p.status,...(p.milestones||[])].some(v=>String(v||"").toLowerCase().includes(searchText)));
+ $("projectList").innerHTML=projects.map(projectCard).join()||'<div class="empty">Aucun projet. Crée ton premier projet pour suivre son avancement.</div>';
+ $("dashboardProjects").innerHTML=projects.slice(0,3).map(projectCard).join()||'<div class="empty">Tes projets apparaîtront ici.</div>';
+}
 function renderCalendar(){
-  const year=calendarDate.getFullYear(),month=calendarDate.getMonth();
-  $("calendarTitle").textContent=new Intl.DateTimeFormat("fr-FR",{month:"long",year:"numeric"}).format(calendarDate);
-  const first=new Date(year,month,1),offset=(first.getDay()+6)%7,days=new Date(year,month+1,0).getDate();
-  const cells=[];
-  ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].forEach(d=>cells.push(`<div class="weekday">${d}</div>`));
-  for(let i=0;i<offset;i++)cells.push('<div></div>');
-  for(let day=1;day<=days;day++){
-    const date=`${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
-    const dayTasks=data.tasks.filter(t=>t.due===date);
-    const dots=dayTasks.slice(0,5).map(t=>`<span class="day-dot ${t.done?"done":""}"></span>`).join("");
-    cells.push(`<button class="day ${date===todayISO()?"today":""} ${date===selectedDate?"selected":""}" onclick="selectCalendarDate('${date}')"><span class="day-number">${day}</span><div class="day-dots">${dots}</div>${dayTasks.length?`<span class="muted small-text">${dayTasks.length} tâche(s)</span>`:""}</button>`);
-  }
-  $("calendarGrid").innerHTML=cells.join("");
-  $("selectedDateTitle").textContent="Tâches du "+formatDate(selectedDate);
-  const dayTasks=data.tasks.filter(t=>t.due===selectedDate&&taskMatchesSearch);
-  renderTaskList("calendarTasks",dayTasks,"Aucune tâche à cette date.");
+ const y=calendarDate.getFullYear(),m=calendarDate.getMonth(),first=new Date(y,m,1),offset=(first.getDay()+6)%7,days=new Date(y,m+1,0).getDate();
+ $("calendarTitle").textContent=new Intl.DateTimeFormat("fr-FR",{month:"long",year:"numeric"}).format(calendarDate);
+ const cells=["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"].map(d=>`<div class="weekday">${d}</div>`);
+ for(let i=0;i<offset;i++)cells.push("<div></div>");
+ for(let day=1;day<=days;day++){
+  const date=`${y}-${String(m+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+  const tasks=data.tasks.filter(t=>t.due===date);
+  const dots=tasks.slice(0,5).map(t=>`<span class="day-dot ${t.done?"done":""}"></span>`).join("");
+  cells.push(`<button class="day ${date===todayISO()?"today":""} ${date===selectedDate?"selected":""}" onclick="selectCalendarDate('${date}')"><span class="day-number">${day}</span><div class="day-dots">${dots}</div>${tasks.length?`<span class="muted small-text">${tasks.length} tâche(s)</span>`:""}</button>`);
+ }
+ $("calendarGrid").innerHTML=cells.join("");
+ $("selectedDateTitle").textContent="Tâches du "+formatDate(selectedDate);
+ renderTaskList("calendarTasks",data.tasks.filter(t=>t.due===selectedDate&&taskMatchesSearch(t)),"Aucune tâche à cette date.");
 }
-function changeMonth(amount){calendarDate.setMonth(calendarDate.getMonth()+amount);renderCalendar()}
+function changeMonth(n){calendarDate.setMonth(calendarDate.getMonth()+n);renderCalendar()}
 function selectCalendarDate(date){selectedDate=date;renderCalendar()}
-
+function goToToday(){calendarDate=new Date();selectedDate=todayISO();renderCalendar()}
 function renderStats(){
-  $("statsCards").innerHTML=renderStatsCards();
-  const categories=["Informatique","Football","Études","Personnel","Autre"];
-  $("categoryStats").innerHTML=categories.map(cat=>{
-    const count=data.tasks.filter(t=>t.category===cat).length;
-    const percent=data.tasks.length?count/data.tasks.length*100:0;
-    return `<div class="bar-row"><span>${categoryEmoji(cat)} ${cat}</span><div class="bar"><span style="width:${percent}%"></span></div><strong>${count}</strong></div>`;
-  }).join("");
-  const total=data.tasks.length,done=data.tasks.filter(t=>t.done).length,active=total-done,overdue=data.tasks.filter(isOverdue).length;
-  const rows=[["À faire",active,"var(--accent)"],["Terminées",done,"var(--green)"],["En retard",overdue,"var(--red)"]];
-  $("statusStats").innerHTML=rows.map(([label,count,color])=>{
-    const percent=total?count/total*100:0;
-    return `<div class="bar-row"><span>${label}</span><div class="bar"><span style="width:${percent}%;background:${color}"></span></div><strong>${count}</strong></div>`;
-  }).join("");
+ $("statsCards").innerHTML=statCards();
+ const categories=["Informatique","Football","Études","Personnel","Autre"];
+ $("categoryStats").innerHTML=categories.map(c=>{
+  const n=data.tasks.filter(t=>t.category===c).length,p=data.tasks.length?n/data.tasks.length*100:0;
+  return `<div class="bar-row"><span>${catEmoji(c)} ${c}</span><div class="bar"><span style="width:${p}%"></span></div><strong>${n}</strong></div>`;
+ }).join("");
+ const total=data.tasks.length,done=data.tasks.filter(t=>t.done).length,overdue=data.tasks.filter(isOverdue).length;
+ $("statusStats").innerHTML=[["À faire",total-done,"var(--accent)"],["Terminées",done,"var(--green)"],["En retard",overdue,"var(--red)"]].map(([label,n,color])=>{
+  const p=total?n/total*100:0;
+  return `<div class="bar-row"><span>${label}</span><div class="bar"><span style="width:${p}%;background:${color}"></span></div><strong>${n}</strong></div>`;
+ }).join("");
 }
-
 function renderLinks(){
-  $("settingsLinks").innerHTML=data.links.length?data.links.map(l=>`<div class="project-line" style="margin:10px 0;gap:10px"><a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent);overflow-wrap:anywhere">${esc(l.name)}</a><button class="btn small danger" onclick="deleteLink('${l.id}')">Supprimer</button></div>`).join():'<div class="empty">Aucun raccourci personnalisé.</div>';
+ $("settingsLinks").innerHTML=data.links.length?data.links.map(l=>`<div class="project-line" style="margin:10px 0"><a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent);overflow-wrap:anywhere">${esc(l.name)}</a><button class="btn small danger" onclick="deleteLink('${l.id}')">Supprimer</button></div>`).join():'<div class="empty">Aucun raccourci personnalisé.</div>';
 }
-
 function updateProjectOptions(selected=""){
-  $("taskProject").innerHTML='<option value="">Aucun projet</option>'+data.projects.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
-  $("taskProject").value=selected;
+ $("taskProject").innerHTML='<option value="">Aucun projet</option>'+data.projects.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
+ $("taskProject").value=selected;
 }
-
-function renderAll(){
-  renderDashboard();renderTasks();renderCalendar();renderProjects();renderStats();renderLinks();
-  updateProjectOptions($("taskProject").value);
-}
+function renderAll(){renderDashboard();renderTasks();renderCalendar();renderProjects();renderStats();renderLinks();renderColorOptions();updateProjectOptions($("taskProject").value);$("lastExport").textContent=data.lastExport||"Aucune sauvegarde exportée dans cette session";}
 
 function openTaskModal(id="",defaultDate=""){
-  $("taskForm").reset();
-  $("taskId").value="";
-  $("taskModalTitle").textContent=id?"Modifier la tâche":"Nouvelle tâche";
-  const task=data.tasks.find(t=>t.id===id);
-  updateProjectOptions(task?.projectId||"");
-  if(task){
-    $("taskId").value=task.id;
-    $("taskTitle").value=task.title||"";
-    $("taskCategory").value=task.category||"Autre";
-    $("taskPriority").value=task.priority||"medium";
-    $("taskDue").value=task.due||"";
-    $("taskDescription").value=task.description||"";
-  }else{
-    $("taskDue").value=defaultDate||"";
-    $("taskCategory").value="Informatique";
-    $("taskPriority").value="medium";
-  }
-  openModal("taskModal");
-  setTimeout(()=>$("taskTitle").focus(),50);
+ $("taskForm").reset();$("taskId").value="";
+ const task=data.tasks.find(t=>t.id===id);
+ $("taskModalTitle").textContent=task?"Modifier la tâche":"Nouvelle tâche";
+ updateProjectOptions(task?.projectId||"");
+ if(task){
+  $("taskId").value=task.id;$("taskTitle").value=task.title||"";
+  $("taskCategory").value=task.category||"Autre";$("taskPriority").value=task.priority||"medium";
+  $("taskDue").value=task.due||"";$("taskDescription").value=task.description||"";
+ }else{$("taskDue").value=defaultDate;$("taskCategory").value="Informatique";$("taskPriority").value="medium";}
+ openModal("taskModal");setTimeout(()=>$("taskTitle").focus(),50);
 }
-
 $("taskForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  const id=$("taskId").value;
-  const old=data.tasks.find(t=>t.id===id);
-  const task={
-    id:id||uid(),
-    title:$("taskTitle").value.trim(),
-    category:$("taskCategory").value,
-    priority:$("taskPriority").value,
-    due:$("taskDue").value,
-    projectId:$("taskProject").value,
-    description:$("taskDescription").value.trim(),
-    done:old?old.done:false,
-    createdAt:old?old.createdAt:new Date().toISOString()
-  };
-  if(!task.title){toast("Le nom de la tâche est obligatoire.");return}
-  if(old)data.tasks=data.tasks.map(t=>t.id===id?task:t);
-  else data.tasks.push(task);
-  saveData();closeModal("taskModal");renderAll();
-  toast(old?"Tâche modifiée.":"Tâche ajoutée.");
+ e.preventDefault();const id=$("taskId").value,old=data.tasks.find(t=>t.id===id);
+ const task={id:id||uid(),title:$("taskTitle").value.trim(),category:$("taskCategory").value,priority:$("taskPriority").value,due:$("taskDue").value,projectId:$("taskProject").value,description:$("taskDescription").value.trim(),done:old?old.done:false,createdAt:old?old.createdAt:new Date().toISOString()};
+ if(!task.title)return;
+ if(old)data.tasks=data.tasks.map(t=>t.id===id?task:t);else data.tasks.push(task);
+ saveData();closeModal("taskModal");renderAll();toast(old?"Tâche modifiée.":"Tâche ajoutée.");
 });
-
-function toggleTask(id){
-  const task=data.tasks.find(t=>t.id===id);
-  if(!task)return;
-  task.done=!task.done;saveData();renderAll();
-}
+function toggleTask(id){const t=data.tasks.find(t=>t.id===id);if(!t)return;t.done=!t.done;saveData();renderAll();}
 function deleteTask(id){
-  const task=data.tasks.find(t=>t.id===id);
-  if(!task)return;
-  if(!confirm(`Supprimer la tâche « ${task.title} » ?`))return;
-  data.tasks=data.tasks.filter(t=>t.id!==id);
-  saveData();renderAll();toast("Tâche supprimée.");
+ const t=data.tasks.find(t=>t.id===id);if(!t)return;
+ if(!confirm(`Supprimer la tâche « ${t.title} » ?`))return;
+ data.tasks=data.tasks.filter(t=>t.id!==id);saveData();renderAll();toast("Tâche supprimée.");
 }
 
 function openProjectModal(id=""){
-  $("projectForm").reset();
-  $("projectId").value="";
-  $("projectModalTitle").textContent=id?"Modifier le projet":"Nouveau projet";
-  const p=data.projects.find(p=>p.id===id);
-  if(p){
-    $("projectId").value=p.id;$("projectName").value=p.name;
-    $("projectDescription").value=p.description||"";
-    $("projectProgress").value=p.progress??0;$("projectStatus").value=p.status||"En cours";
-  }else{
-    $("projectProgress").value=0;$("projectStatus").value="En cours";
-  }
-  openModal("projectModal");
+ $("projectForm").reset();$("projectId").value="";
+ const p=data.projects.find(p=>p.id===id);
+ $("projectModalTitle").textContent=p?"Modifier le projet":"Nouveau projet";
+ if(p){
+  $("projectId").value=p.id;$("projectName").value=p.name;
+  $("projectDescription").value=p.description||"";$("projectProgress").value=p.progress??0;
+  $("projectStatus").value=p.status||"En cours";$("projectMilestones").value=(p.milestones||[]).join("\n");
+ }else{$("projectProgress").value=0;$("projectStatus").value="En cours";}
+ openModal("projectModal");
 }
 $("projectForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  const id=$("projectId").value;
-  const p={
-    id:id||uid(),name:$("projectName").value.trim(),
-    description:$("projectDescription").value.trim(),
-    progress:Math.max(0,Math.min(100,Number($("projectProgress").value)||0)),
-    status:$("projectStatus").value
-  };
-  if(p.status==="Terminé")p.progress=100;
-  if(!p.name){toast("Le nom du projet est obligatoire.");return}
-  if(id)data.projects=data.projects.map(x=>x.id===id?p:x);
-  else data.projects.push(p);
-  saveData();closeModal("projectModal");renderAll();toast(id?"Projet modifié.":"Projet ajouté.");
+ e.preventDefault();const id=$("projectId").value;
+ const p={id:id||uid(),name:$("projectName").value.trim(),description:$("projectDescription").value.trim(),progress:Math.max(0,Math.min(100,Number($("projectProgress").value)||0)),status:$("projectStatus").value,milestones:$("projectMilestones").value.split("\n").map(s=>s.trim()).filter(Boolean)};
+ if(p.status==="Terminé")p.progress=100;
+ if(!p.name){toast("Le nom du projet est obligatoire.");return}
+ if(id)data.projects=data.projects.map(x=>x.id===id?p:x);else data.projects.push(p);
+ saveData();closeModal("projectModal");renderAll();toast(id?"Projet modifié.":"Projet ajouté.");
 });
 function deleteProject(id){
-  const p=data.projects.find(p=>p.id===id);
-  if(!p)return;
-  const linked=data.tasks.filter(t=>t.projectId===id).length;
-  const message=`Supprimer le projet « ${p.name} » ?${linked?`\n\n${linked} tâche(s) associée(s) resteront dans ta liste, mais sans projet.`:""}`;
-  if(!confirm(message))return;
-  data.projects=data.projects.filter(x=>x.id!==id);
-  data.tasks.forEach(t=>{if(t.projectId===id)t.projectId=""});
-  saveData();renderAll();toast("Projet supprimé.");
+ const p=data.projects.find(p=>p.id===id);if(!p)return;
+ const linked=data.tasks.filter(t=>t.projectId===id).length;
+ if(!confirm(`Supprimer le projet « ${p.name} » ?${linked?`\n\n${linked} tâche(s) resteront dans ta liste, sans projet associé.`:""}`))return;
+ data.projects=data.projects.filter(p=>p.id!==id);data.tasks.forEach(t=>{if(t.projectId===id)t.projectId="";});
+ saveData();renderAll();toast("Projet supprimé.");
 }
-
-function openLinkModal(){
-  $("linkForm").reset();openModal("linkModal");
-}
+function openLinkModal(){$("linkForm").reset();openModal("linkModal")}
 $("linkForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  const name=$("linkName").value.trim(),url=$("linkUrl").value.trim();
-  try{
-    const parsed=new URL(url);
-    if(!["http:","https:"].includes(parsed.protocol))throw new Error();
-  }catch(e){toast("Saisis une adresse web valide commençant par https://");return}
-  data.links.push({id:uid(),name,url});
-  saveData();closeModal("linkModal");renderLinks();toast("Raccourci ajouté.");
+ e.preventDefault();const name=$("linkName").value.trim(),url=$("linkUrl").value.trim();
+ try{const u=new URL(url);if(!["http:","https:"].includes(u.protocol))throw Error();}
+ catch(e){toast("Saisis une adresse valide commençant par https://");return}
+ data.links.push({id:uid(),name,url});saveData();closeModal("linkModal");renderLinks();toast("Raccourci ajouté.");
 });
-function deleteLink(id){
-  if(!confirm("Supprimer ce raccourci ?"))return;
-  data.links=data.links.filter(l=>l.id!==id);
-  saveData();renderLinks();toast("Raccourci supprimé.");
-}
+function deleteLink(id){if(!confirm("Supprimer ce raccourci ?"))return;data.links=data.links.filter(l=>l.id!==id);saveData();renderLinks();toast("Raccourci supprimé.");}
 
 function exportData(){
-  const backup={
-    app:"MySpace Dashboard",
-    version:3,
-    exportedAt:new Date().toISOString(),
-    tasks:data.tasks,projects:data.projects,links:data.links,theme:data.theme
-  };
-  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;a.download=`myspace-sauvegarde-${todayISO()}.json`;
-  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
-  toast("Sauvegarde exportée.");
+ const backup={app:"MySpace Dashboard",version:4,exportedAt:new Date().toISOString(),tasks:data.tasks,projects:data.projects,links:data.links,theme:data.theme,accent:data.accent};
+ const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=`myspace-v4-${todayISO()}.json`;document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+ data.lastExport=new Date().toLocaleString("fr-FR");saveData();$("lastExport").textContent=data.lastExport;toast("Sauvegarde exportée.");
 }
-
 async function importData(){
-  const file=$("importFile").files[0];
-  if(!file){toast("Choisis d'abord un fichier JSON.");return}
-  if(!confirm("L'import va remplacer les données actuellement enregistrées. As-tu exporté une sauvegarde de tes données actuelles ?"))return;
-  try{
-    const parsed=JSON.parse(await file.text());
-    if(!parsed||!Array.isArray(parsed.tasks)||!Array.isArray(parsed.projects)||!Array.isArray(parsed.links)){
-      throw new Error("Format de sauvegarde non reconnu.");
-    }
-    const validTasks=parsed.tasks.every(t=>t&&typeof t.title==="string"&&typeof t.id==="string");
-    const validProjects=parsed.projects.every(p=>p&&typeof p.name==="string"&&typeof p.id==="string");
-    const validLinks=parsed.links.every(l=>l&&typeof l.name==="string"&&typeof l.url==="string");
-    if(!validTasks||!validProjects||!validLinks)throw new Error("Le fichier contient des données invalides.");
-    data={
-      tasks:parsed.tasks.map(t=>({...t,done:!!t.done})),
-      projects:parsed.projects.map(p=>({...p,progress:Math.max(0,Math.min(100,Number(p.progress)||0))})),
-      links:parsed.links,
-      theme:parsed.theme==="light"?"light":"dark"
-    };
-    saveData();applyTheme();renderAll();$("importFile").value="";
-    toast("Sauvegarde importée avec succès.");
-  }catch(err){
-    toast("Import impossible : "+(err.message||"fichier invalide"));
-  }
+ const file=$("importFile").files[0];if(!file){toast("Choisis un fichier JSON.");return}
+ if(!confirm("L'import va remplacer les données actuelles. As-tu une sauvegarde de ces données ?"))return;
+ try{
+  const d=JSON.parse(await file.text());
+  if(!d||!Array.isArray(d.tasks)||!Array.isArray(d.projects)||!Array.isArray(d.links))throw Error("Format de sauvegarde non reconnu.");
+  if(!d.tasks.every(t=>t&&typeof t.id==="string"&&typeof t.title==="string"))throw Error("La liste des tâches est invalide.");
+  if(!d.projects.every(p=>p&&typeof p.id==="string"&&typeof p.name==="string"))throw Error("La liste des projets est invalide.");
+  if(!d.links.every(l=>l&&typeof l.name==="string"&&typeof l.url==="string"))throw Error("La liste des raccourcis est invalide.");
+  data={tasks:d.tasks.map(t=>({...t,done:!!t.done,category:t.category||"Autre",priority:t.priority||"medium"})),projects:d.projects.map(p=>({...p,milestones:Array.isArray(p.milestones)?p.milestones:[]})),links:d.links,theme:d.theme==="light"?"light":"dark",accent:accentChoices.includes(d.accent)?d.accent:"#61a8ff",lastExport:data.lastExport};
+  saveData();applyTheme();renderAll();$("importFile").value="";toast("Sauvegarde importée avec succès.");
+ }catch(e){toast("Import impossible : "+e.message);}
 }
-
 function resetData(){
-  if(!confirm("Attention : cette action supprimera toutes tes tâches, tous tes projets et tes raccourcis personnalisés. As-tu une sauvegarde ?"))return;
-  if(!confirm("Dernière confirmation : veux-tu vraiment tout réinitialiser ?"))return;
-  data=defaultData();saveData();applyTheme();renderAll();toast("Données réinitialisées.");
+ if(!confirm("Supprimer toutes les tâches, tous les projets et tous les raccourcis ?"))return;
+ if(!confirm("Dernière confirmation : cette action est difficile à annuler sans sauvegarde. Continuer ?"))return;
+ const fresh=defaults();data={...fresh,lastExport:""};saveData();applyTheme();renderAll();toast("Données réinitialisées.");
 }
-
 $("globalSearch").addEventListener("input",e=>{
-  searchText=e.target.value.trim().toLowerCase();
-  if(searchText&&currentView==="dashboard")renderDashboard();
-  else if(searchText&&currentView==="tasks")renderTasks();
-  else if(searchText&&currentView==="projects")renderProjects();
-  else renderAll();
+ searchText=e.target.value.trim().toLowerCase();
+ if(currentView==="tasks")renderTasks();
+ else if(currentView==="projects")renderProjects();
+ else if(currentView==="calendar")renderCalendar();
+ else renderDashboard();
 });
-
 applyTheme();
 showView("dashboard");
 </script>
