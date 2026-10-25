@@ -4,3 +4,7 @@
 
 /* V10 Universe Ultimate */
 .automation-rule{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:15px 0;border-bottom:1px solid var(--line)}.automation-rule:last-child{border-bottom:0}.automation-rule strong{font-size:13px}.automation-rule p{font-size:11px;margin:5px 0 0;line-height:1.5}.switch{position:relative;display:inline-flex;flex-shrink:0;width:42px;height:24px}.switch input{opacity:0;width:0;height:0}.switch span{position:absolute;inset:0;background:#9ba8ba;border-radius:30px;transition:.2s;cursor:pointer}.switch span:before{content:'';position:absolute;left:3px;top:3px;width:18px;height:18px;background:white;border-radius:50%;transition:.2s}.switch input:checked+span{background:var(--blue)}.switch input:checked+span:before{transform:translateX(18px)}.switch input:focus-visible+span{outline:2px solid var(--blue);outline-offset:3px}
+
+/* V11 — horloge et espace IT/SISR */
+.live-clock{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;min-width:104px;padding:5px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-variant-numeric:tabular-nums;line-height:1.2}.live-clock strong{font-size:17px;letter-spacing:.8px;color:var(--text)}.live-clock span{font-size:9px;color:var(--muted);text-transform:capitalize;margin-top:4px}.sisr-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media(max-width:760px){.live-clock{order:2;min-width:94px}.live-clock strong{font-size:15px}.top-actions{gap:6px}}
