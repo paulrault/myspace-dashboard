@@ -1,27 +1,19 @@
-# MySpace Universe V11 — SISR Edition
+# MySpace Universe V13 — SISR Edition
 
-Application statique pour GitHub Pages : HTML, CSS et JavaScript. Pas de cloud, pas de Supabase, aucun backend.
+## Fichiers
+- `index.html` : structure de l’interface
+- `style.css` : thème et mise en page
+- `app.js` : modules, données et interactions
 
-## Nouveautés V11
-- Centre IT/SISR renforcé : inventaire des serveurs, machines virtuelles, postes, équipements réseau, hostname, IP, VLAN, système/version, rôles et services.
-- Documentation des VLAN, réseaux CIDR, passerelles et usages.
-- Registre d’incidents avec priorité, état, date, actions et résolution/réouverture.
-- Procédures locales de dépannage pour réseau, Windows Server, Active Directory, DNS/DHCP, Debian, virtualisation, sauvegarde et sécurité.
-- Horloge numérique en direct (HH:MM:SS) et date locale dans la barre supérieure. L’heure suit l’horloge du système et se met à jour chaque seconde.
-- Migration automatique des clés V10 puis V9 vers V11 dans le même navigateur/origine. Les données anciennes ne sont pas supprimées.
-- Les modules V10 restent présents : tâches récurrentes, projets/chronologie, calendrier, notes, notifications, automatisations, football, connaissances, statistiques, thème, recherche, sauvegardes locales, import/export JSON.
+## Nouveautés V13
+- Laboratoire interactif documentaire
+- Relations entre équipements (connectivité, hébergement, dépendances DNS/DHCP, passerelle, sauvegarde)
+- Scénarios de validation SISR avec étapes et statut
+- Journal de contrôles de santé avec résultats OK / À vérifier / Échec
+- Migration automatique depuis V12, V11, V10 et V9 si les données existent dans le même navigateur et sur la même origine
 
-## Installation GitHub Pages
-1. Décompressez le ZIP.
-2. Téléversez `index.html`, `style.css`, `app.js` et `README.md` à la racine du dépôt GitHub Pages.
-3. Faites un commit puis ouvrez le site publié.
+## Installation
+Décompressez l’archive et téléversez les quatre fichiers à la racine de votre dépôt GitHub Pages. Exportez d’abord un JSON depuis la version précédente pour garder une sauvegarde.
 
-## Données et limites
-Les données sont stockées dans `localStorage`, propre à ce navigateur et à cette origine. Pour changer d'appareil ou de domaine, exportez un JSON depuis Paramètres & données puis importez-le dans V11. Les nouveaux tableaux `vlans`, `incidents` et `procedures` sont normalisés automatiquement.
-
-L’inventaire est documentaire : il ne réalise pas de ping, de scan IP, de supervision, de connexion à Active Directory ou de modification de configuration réseau.
-
-## Contrôles effectués pour cette livraison
-- Syntaxe JavaScript contrôlée avec `node --check`.
-- Intégrité ZIP vérifiée.
-- Les tests d’interaction dans un vrai navigateur restent à réaliser ; aucune certification complète des interactions n’est revendiquée.
+## Limites et confidentialité
+Les données restent dans le stockage local du navigateur. La V13 ne se connecte pas aux serveurs, ne lance pas de ping, ne scanne pas les IP et ne supervise pas automatiquement le réseau. Les relations et contrôles sont saisis manuellement.
