@@ -1,43 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1220">
-<meta name="description" content="MySpace Universe — espace personnel, informatique et football.">
-<title>MySpace Universe V7</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101a2c"><title>MySpace Universe V8</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app-shell">
-  <aside class="sidebar" id="sidebar">
-    <div class="brand"><div class="brand-mark">M<span>✦</span></div><div><strong>MySpace</strong><small>UNIVERSE <b>V7</b></small></div><button class="icon-btn mobile-close" id="closeSidebar" aria-label="Fermer le menu">×</button></div>
-    <div class="workspace"><span class="workspace-dot"></span><div><strong>Mon espace</strong><small>Stockage local</small></div><span class="chevron">⌄</span></div>
-    <nav class="nav">
-      <p class="nav-label">ESPACE PERSONNEL</p>
-      <button class="nav-item active" data-view="dashboard"><span>◫</span>Vue d'ensemble</button>
-      <button class="nav-item" data-view="tasks"><span>☑</span>Tâches <i id="navTaskCount">0</i></button>
-      <button class="nav-item" data-view="projects"><span>▦</span>Projets</button>
-      <button class="nav-item" data-view="calendar"><span>▦</span>Calendrier</button>
-      <button class="nav-item" data-view="notes"><span>▤</span>Notes</button>
-      <p class="nav-label">MES UNIVERS</p>
-      <button class="nav-item" data-view="it"><span>⌘</span>Lab informatique <em>SISR</em></button>
-      <button class="nav-item" data-view="football"><span>⚽</span>Univers football</button>
-      <button class="nav-item" data-view="stats"><span>◔</span>Statistiques</button>
-      <p class="nav-label">SYSTÈME</p>
-      <button class="nav-item" data-view="settings"><span>⚙</span>Paramètres</button>
-    </nav>
-    <div class="sidebar-bottom"><div class="local-card"><span class="pulse"></span><div><strong>Mode local actif</strong><small>Vos données restent sur cet appareil.</small></div></div><button class="user-card" id="profileButton"><div class="avatar">M</div><div><strong>Mon espace</strong><small>Profil local</small></div><span>•••</span></button></div>
-  </aside>
-  <div class="sidebar-scrim" id="scrim"></div>
-  <main class="main">
-    <header class="topbar"><button class="icon-btn hamburger" id="openSidebar" aria-label="Ouvrir le menu">☰</button><div class="breadcrumbs"><span>MySpace</span><b>/</b><strong id="breadcrumb">Vue d'ensemble</strong></div><div class="top-actions"><label class="global-search"><span>⌕</span><input id="globalSearch" placeholder="Rechercher partout…" aria-label="Rechercher partout"><kbd>Ctrl K</kbd></label><button class="icon-btn" id="themeToggle" title="Changer de thème" aria-label="Changer de thème">☼</button><button class="primary-btn small" id="quickAdd"><span>＋</span> Nouveau</button></div></header>
-    <section class="content" id="content" tabindex="-1"></section>
-    <footer class="footer"><span>MySpace Universe <b>V7</b></span><span><i class="status-dot"></i> Toutes les données sont enregistrées localement</span></footer>
-  </main>
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="brand-mark">U</div><div><strong>MYSPACE</strong><span>UNIVERSE <small>V8</small></span></div></div>
+  <div class="workspace-label">ESPACE PERSONNEL</div>
+  <nav id="nav">
+    <button class="nav-item active" data-view="home"><span>◈</span> Vue d'ensemble</button>
+    <button class="nav-item" data-view="tasks"><span>✓</span> Tâches <b id="taskBadge">0</b></button>
+    <button class="nav-item" data-view="projects"><span>▦</span> Projets</button>
+    <button class="nav-item" data-view="calendar"><span>▣</span> Calendrier</button>
+    <button class="nav-item" data-view="notes"><span>▤</span> Notes</button>
+    <div class="nav-separator"></div>
+    <div class="workspace-label">UNIVERSE CENTER</div>
+    <button class="nav-item" data-view="it"><span>⌘</span> Centre IT / SISR</button>
+    <button class="nav-item" data-view="football"><span>⚽</span> Football</button>
+    <button class="nav-item" data-view="knowledge"><span>⌑</span> Connaissances</button>
+    <button class="nav-item" data-view="stats"><span>▥</span> Statistiques</button>
+    <div class="nav-separator"></div>
+    <button class="nav-item" data-view="settings"><span>⚙</span> Paramètres & données</button>
+  </nav>
+  <div class="sidebar-bottom"><div class="local-indicator"><i></i><span>Stockage local actif</span></div><small>Vos données restent dans ce navigateur.</small></div>
+</aside>
+<main class="main">
+<header class="topbar"><button id="menuToggle" class="icon-btn mobile-only" aria-label="Ouvrir le menu">☰</button><div class="breadcrumb"><span>MYSPACE UNIVERSE</span><b>/</b><strong id="viewLabel">Vue d'ensemble</strong></div><div class="top-actions"><label class="searchbox"><span>⌕</span><input id="globalSearch" placeholder="Rechercher partout… ( / )" aria-label="Recherche globale"></label><button id="themeToggle" class="icon-btn" title="Changer de thème">◐</button><button class="avatar" id="quickAdd" title="Ajouter rapidement">+</button></div></header>
+<section class="content" id="content"></section>
+<footer><span>MYSPACE UNIVERSE V8</span><span>Local-first · Aucun cloud · <b id="saveStatus">Enregistré</b></span></footer>
+</main>
 </div>
-<div class="toast-region" id="toastRegion" aria-live="polite"></div>
-<dialog id="itemDialog" class="modal"><form id="itemForm" method="dialog"><div class="modal-head"><div><p class="eyebrow" id="modalEyebrow">NOUVEL ÉLÉMENT</p><h2 id="modalTitle">Créer un élément</h2></div><button type="button" class="icon-btn" id="modalClose" aria-label="Fermer">×</button></div><div id="modalFields" class="modal-fields"></div><div class="modal-actions"><button type="button" class="secondary-btn" id="modalCancel">Annuler</button><button type="submit" class="primary-btn">Enregistrer</button></div></form></dialog>
+<div class="toast-region" id="toasts" aria-live="polite"></div>
+<dialog id="modal"><form method="dialog" id="modalForm"><div class="modal-head"><div><span class="eyebrow" id="modalEyebrow">UNIVERSE</span><h2 id="modalTitle">Ajouter</h2></div><button class="icon-btn" value="cancel" aria-label="Fermer">×</button></div><div id="modalBody"></div><div class="modal-actions"><button class="btn secondary" value="cancel">Annuler</button><button class="btn primary" id="modalSubmit" value="default">Enregistrer</button></div></form></dialog>
 <script src="app.js"></script>
-</body>
-</html>
+</body></html>
