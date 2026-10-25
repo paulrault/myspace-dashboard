@@ -1,25 +1,28 @@
-# MySpace Universe V9 — Universe Intelligence
+# MySpace Universe V10 — Universe Ultimate
 
-Application personnelle statique pour GitHub Pages. HTML, CSS et JavaScript, sans backend, sans compte, sans Supabase et sans synchronisation cloud.
+Application personnelle statique, prête pour GitHub Pages. Aucun backend, aucun compte, aucune dépendance cloud et aucun Supabase.
 
 ## Installation
-1. Téléchargez et décompressez `myspace-universe-v9.zip`.
-2. Téléversez `index.html`, `style.css`, `app.js` et `README.md` à la racine de votre dépôt GitHub Pages.
-3. Committez les fichiers puis ouvrez le site publié.
+1. Décompressez `myspace-universe-v10.zip`.
+2. Téléversez `index.html`, `style.css`, `app.js` et `README.md` à la racine du dépôt GitHub Pages.
+3. Validez les changements (commit) puis ouvrez le site publié.
 
-## Nouveautés V9
-- Centre de notifications local : retards, échéances, projets à échéance, marquer comme lu et effacer.
-- Tâches récurrentes quotidiennes, hebdomadaires et mensuelles. La prochaine occurrence est créée lorsque la tâche est terminée.
-- Statistiques avancées : taux de réalisation, retards, priorités, récurrence, progression par projet et volumes des modules.
-- Chronologie des projets, triée par échéance, avec statut et progression.
-- Recherche globale, thème clair/sombre, tâches, projets, calendrier, notes, inventaire IT/SISR, carnet de football et base de connaissances.
-- Export/import JSON et réinitialisation locale.
+## Nouveautés V10
+- Centre d'automatisations : activation/désactivation des alertes d'échéance, de risque projet et de revue hebdomadaire.
+- Récurrences quotidiennes, hebdomadaires et mensuelles, avec correction du calcul des fins de mois.
+- Centre de commandes (bouton ⌘ ou Ctrl+K) pour accéder rapidement aux actions courantes.
+- Sauvegardes locales versionnées (jusqu'à cinq instantanés) et restauration avec confirmation.
+- Statistiques enrichies, dont les tâches terminées sur les sept derniers jours lorsque leur date de fin est disponible.
+- Migration automatique de la clé de stockage `myspace-universe-v9` vers `myspace-universe-v10` dans le même navigateur. L'ancienne clé reste intacte.
+- Import JSON normalisé et export au schéma V10. Les données exportées de V9 sont prises en charge lorsqu'elles contiennent un objet de données compatible.
+- Conservation des modules V9 : tâches, projets, calendrier, notes, notifications, inventaire IT/SISR, football, connaissances, statistiques, thème clair/sombre et recherche globale.
 
-## Stockage et confidentialité
-Les données sont conservées dans `localStorage` du navigateur sous la clé `myspace-universe-v9`. Elles ne sont pas transmises ni synchronisées. Exportez régulièrement vos données en JSON. L'import remplace les données présentes après confirmation.
+## Stockage et limites
+Les données résident dans `localStorage` du navigateur, propre à l'origine du site et à l'appareil. Elles ne sont pas envoyées sur Internet. Les sauvegardes locales restent dans ce navigateur : utilisez aussi Export JSON pour conserver une copie sur votre ordinateur.
 
-## Migration depuis V8
-Le stockage V8 et V9 utilise des clés différentes. Pour récupérer des données V8, exportez-les depuis V8, puis importez le JSON dans V9. Le format V9 accepte un objet de données brut ou un export V9 enveloppé dans `data`; les formats différents peuvent nécessiter une adaptation.
+Les automatisations s'exécutent à l'ouverture ou au rendu d'une vue, ainsi que lorsque vous appuyez sur « Exécuter les règles ». Elles ne tournent pas lorsque la page est fermée et ne constituent pas des notifications système natives.
 
-## Notes de validation
-Le JavaScript doit être contrôlé avec `node --check app.js` et l'archive testée avant publication. Les interactions doivent ensuite être vérifiées dans un navigateur : ajout/modification/suppression, tâche récurrente terminée, alertes d'échéance, export/import, thème et rechargement de page. Les notifications d'échéance sont calculées à l'ouverture ou au rendu d'une vue, pas par un service tournant en arrière-plan.
+## Validation réalisée
+- Syntaxe JavaScript contrôlée avec `node --check`.
+- Intégrité ZIP contrôlée.
+- Tests navigateur headless à réaliser/consulter selon le rapport de livraison : les tests automatisés ne couvrent pas nécessairement tous les cas d'utilisation.
